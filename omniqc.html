@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/omni.css">
+<title>OmniQC — Open frontier research for quantum computing</title>
+<meta name="description" content="OmniQC runs open research challenges for quantum computing: a reproduction benchmark for AI scientists, and open problems in quantum algorithm discovery.">
+<meta name="theme-color" content="#eeece7"><style>
+/* omniqc.html — hub; the system lives in assets/omni.css */
+
+/* hero: headline + one statement + two actions, full width */
+.hero{display:block;padding:96px 0 76px}
+.hero h1{max-width:16ch}
+.hero .lead{font-size:clamp(16px,1.5vw,20px);line-height:1.6;color:var(--muted);max-width:70ch;margin:32px 0 0}
+.hero .lead b{color:var(--ink);font-weight:600}
+
+/* ---------- a challenge is a box, and every box carries its own motif ---------- */
+.clist{display:grid;gap:16px}
+.crow{display:grid;grid-template-columns:250px 1fr 150px;gap:34px;align-items:center;
+ background:var(--card);border:1px solid var(--hair);border-radius:4px;box-shadow:var(--shadow);
+ padding:24px 26px;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+a.crow:hover{transform:translateY(-2px);border-color:var(--accent);
+ box-shadow:0 2px 4px rgba(20,22,26,.05),0 14px 34px rgba(20,22,26,.08)}
+.crow .nm{font-family:var(--display);font-size:23px;letter-spacing:-.032em;font-weight:600;line-height:1.15}
+.crow .nm small{display:block;font:10px var(--mono);letter-spacing:.11em;text-transform:uppercase;
+ color:var(--muted);margin-top:9px;font-weight:400}
+.crow .de{font-size:13px;line-height:1.62;color:var(--muted);margin-top:12px;max-width:64ch}
+.crow .mt{font:10px var(--mono);letter-spacing:.05em;color:var(--muted);margin-top:11px}
+.crow .mt b{color:var(--ink);font-weight:600}
+.crow .side{display:flex;flex-direction:column;align-items:flex-end;gap:14px;text-align:right}
+.crow .act{font:11px var(--mono);letter-spacing:.08em;color:var(--accent-ink);white-space:nowrap}
+.crow.soon .act{color:var(--muted)}
+
+/* the motif itself — schematic, not a chart: no axes, no numbers, no data */
+.viz{width:250px;height:116px;display:block;border-radius:3px;background:var(--card-2);
+ border:1px solid var(--hair-2)}
+.viz .hair{stroke:var(--hair);stroke-width:1}
+.viz .dim{fill:var(--dim)}
+.viz .acc{fill:var(--accent)}
+.viz .line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.viz .flip-b{opacity:.14}
+.viz .wire{fill:none;stroke:var(--hair);stroke-width:1.5}
+.viz .edge{fill:none;stroke:var(--hair);stroke-width:1.25}
+.viz .band{fill:var(--accent);opacity:.10}
+
+/* Animation runs only while the card is on screen, and the un-animated state
+   is the meaningful one — so prefers-reduced-motion (handled globally in
+   omni.css) leaves a readable still image rather than a blank box. */
+.viz.run .draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);
+  animation:vdraw 4.4s ease-in-out infinite}
+.viz.run .pulse{animation:vpulse 4.4s ease-in-out infinite}
+.viz.run .sweep{animation:vsweep 5s cubic-bezier(.5,0,.5,1) infinite}
+.viz.run .drop{animation:vdrop 5s cubic-bezier(.5,0,.5,1) infinite}
+.viz.run .flip-a{animation:vflipA 4.6s ease-in-out infinite}
+.viz.run .flip-b{animation:vflipB 4.6s ease-in-out infinite}
+.viz.run .breathe{animation:vbreathe 5.2s ease-in-out infinite}
+@keyframes vdraw{0%{stroke-dashoffset:var(--len)}45%,100%{stroke-dashoffset:0}}
+@keyframes vpulse{0%,42%{opacity:0;r:2}58%{opacity:1;r:4.6}72%,100%{opacity:1;r:3.6}}
+@keyframes vsweep{0%{transform:translateX(0)}70%,100%{transform:translateX(186px)}}
+@keyframes vdrop{0%,32%{opacity:1}56%,100%{opacity:.16}}
+@keyframes vflipA{0%,44%{opacity:1}56%,100%{opacity:.14}}
+@keyframes vflipB{0%,44%{opacity:.14}56%,100%{opacity:1}}
+@keyframes vbreathe{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.34)}}
+
+/* With reduced motion the animation is killed globally (omni.css), but the
+   dash offset that the draw animation consumes would survive and leave the
+   frontier line invisible. Restore the finished state instead. */
+@media(prefers-reduced-motion:reduce){
+  .viz .draw{stroke-dasharray:none!important;stroke-dashoffset:0!important}
+  .viz .flip-b{opacity:.14}
+}
+
+@media(max-width:980px){
+ .crow{grid-template-columns:1fr;gap:18px;align-items:start}
+ .viz{width:100%;height:130px}
+ .crow .side{flex-direction:row;align-items:center;justify-content:space-between;
+  width:100%;text-align:left;gap:18px}
+}
+</style></head>
+<body class="p-qc"><div class="noise"></div><div class="shell">
+<nav>
+<a class="brand" href="index.html">OMNI</a>
+<div class="navlinks"><a class="active" href="omniqc.html">OmniQC</a><a href="omniqec.html">OmniQEC</a><a href="omniqst.html">OmniQST</a><a href="people.html">People</a></div>
+</nav>
+
+<section class="hero">
+  <h1>The platform for open quantum research.</h1>
+  <p class="lead">Quantum computing has no shortage of open questions, or of claimed answers. OmniQC is where a claim gets checked the same way for everyone: a standing set of challenges, each with a declared objective and a harness that verifies every entry on our side. Bring an AI scientist or a hand-built method — whatever it achieves lands on a <b>public frontier</b> that only moves when somebody actually beats it. Run by the <b>QID Lab at NTU</b>, where our own systems compete under the same rules.</p>
+  <div class="ctas">
+    <a class="btn solid" href="#challenges">Participate</a>
+    <a class="btn ghost" href="mailto:yuxuan.du@ntu.edu.sg?subject=OmniQC%20challenge%20proposal">Propose a challenge</a>
+  </div>
+</section>
+
+<!-- ===== active challenges — one box per task ===== -->
+<section id="challenges" class="platform">
+<div class="section-head"><div><h2>Active challenges.</h2><p>Each challenge is its own page: the rules, the metric, the record to beat, and a live frontier. Open problems are published here as they are finalised.</p></div></div>
+<div class="clist" id="clist"></div>
+</section>
+
+<section class="platform" style="padding-top:0">
+<div class="section-head"><div><h2>How an entry becomes a result.</h2></div></div>
+<div class="scheme">
+  <div class="step"><div class="num">01</div><h3>Enter</h3><p>Pick a challenge and read its objective, its tolerances, and what a valid submission must contain.</p></div>
+  <div class="step"><div class="num">02</div><h3>Build</h3><p>Solve it however you like — an agent, a fine-tuned model, or a person with a good idea.</p></div>
+  <div class="step"><div class="num">03</div><h3>Submit</h3><p>Hand over an artefact the harness can execute. Nothing about the method has to be disclosed.</p></div>
+  <div class="step"><div class="num">04</div><h3>Verify</h3><p>It runs in an isolated sandbox on our side. The harness reports what happened, not the submitter.</p></div>
+  <div class="step"><div class="num">05</div><h3>Score</h3><p>The objective is computed from the run's artefacts and metered against what the run consumed.</p></div>
+  <div class="step"><div class="num">06</div><h3>Publish</h3><p>The entry lands on the public frontier, whether or not it beat the record, with its trace attached.</p></div>
+</div>
+</section>
+
+<footer><span>OMNI · OmniQC</span><span class="lab"><img class="ntu" src="assets/ntu-logo.svg" alt="Nanyang Technological University" onerror="this.remove()">NTU QID Lab · Quantum Intelligence Discovery Lab</span></footer>
+</div>
+
+<script>
+/* ============================================================
+   OmniQC hub — one array drives the whole page. Adding a
+   challenge = one entry in CHALLENGES + its own page file.
+   `viz` names a motif in VIZ below.
+   ============================================================ */
+
+const CHALLENGES = [
+  { name:"Paper Reproduction Benchmark", track:"Track A · Benchmark", status:"open", viz:"frontier",
+    desc:"Rebuild a published quantum-computing result from the paper alone, scored against what the run cost.",
+    metric:"Reproduction score vs cost per paper", record:"82.4% at $3.10",
+    href:"omniqc-reproduction.html", action:"Participate →" },
+  { name:"Circuit Resource Frontier", track:"Track B · Open problem", status:"soon", viz:"compile",
+    desc:"Minimise a declared resource count for a fixed quantum subroutine, with correctness checked exactly.",
+    metric:"Gate count × qubit width", record:"not yet open", action:"Opening soon" },
+  { name:"Ansatz Discovery", track:"Track B · Open problem", status:"soon", viz:"search",
+    desc:"Find variational circuit families that reach a target accuracy with fewer parameters and shallower depth.",
+    metric:"Parameters at fixed accuracy", record:"not yet open", action:"Opening soon" },
+  { name:"Classical Surrogate Limits", track:"Track B · Open problem", status:"soon", viz:"boundary",
+    desc:"Push the boundary of what a classical surrogate can predict before a quantum device is needed.",
+    metric:"Qubits at fixed prediction error", record:"not yet open", action:"Opening soon" },
+];
+
+/* ------------------------------------------------------------------
+   Motifs. Each one is a schematic of what its challenge optimises —
+   deliberately unlabelled: no axes, no tick values, no numbers, so
+   nothing here can be mistaken for a result. The still frame carries
+   the meaning; motion only replays how it got there.
+   ------------------------------------------------------------------ */
+const VIZ = {
+  // score against cost: points settle, the staircase frontier redraws
+  frontier: `
+    <line class="hair" x1="26" y1="96" x2="228" y2="96"/>
+    <line class="hair" x1="26" y1="20" x2="26" y2="96"/>
+    <circle class="dim" cx="70"  cy="82" r="3"/>
+    <circle class="dim" cx="104" cy="66" r="3"/>
+    <circle class="dim" cx="148" cy="74" r="3"/>
+    <circle class="dim" cx="178" cy="56" r="3"/>
+    <circle class="dim" cx="126" cy="88" r="3"/>
+    <path class="line draw" style="--len:230"
+          d="M46 88 L84 88 L84 62 L134 62 L134 44 L188 44 L188 30 L222 30"/>
+    <circle class="acc" cx="46"  cy="88" r="3.6"/>
+    <circle class="acc" cx="84"  cy="62" r="3.6"/>
+    <circle class="acc" cx="134" cy="44" r="3.6"/>
+    <circle class="acc pulse" cx="188" cy="30" r="3.6"/>`,
+
+  // a fixed subroutine, compiled down: the sweep passes and gates fall away
+  compile: `
+    <line class="wire" x1="24" y1="28" x2="226" y2="28"/>
+    <line class="wire" x1="24" y1="54" x2="226" y2="54"/>
+    <line class="wire" x1="24" y1="80" x2="226" y2="80"/>
+    <g class="acc">
+      <rect x="42"  y="21" width="14" height="14" rx="2"/>
+      <rect x="42"  y="73" width="14" height="14" rx="2"/>
+      <rect x="86"  y="47" width="14" height="14" rx="2"/>
+      <rect x="150" y="21" width="14" height="14" rx="2"/>
+      <rect x="196" y="47" width="14" height="14" rx="2"/>
+    </g>
+    <g class="acc drop">
+      <rect x="64"  y="47" width="14" height="14" rx="2"/>
+      <rect x="108" y="21" width="14" height="14" rx="2"/>
+      <rect x="128" y="73" width="14" height="14" rx="2"/>
+      <rect x="172" y="47" width="14" height="14" rx="2"/>
+    </g>
+    <g class="sweep"><line x1="30" y1="12" x2="30" y2="96"
+       stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3 4" opacity=".7"/></g>`,
+
+  // search over circuit families: one path through the lattice wins, then another
+  search: `
+    <g class="edge">
+      <path d="M56 30 L118 30 M56 30 L118 58 M56 58 L118 30 M56 58 L118 86 M56 86 L118 58 M56 86 L118 86"/>
+      <path d="M118 30 L186 30 M118 30 L186 58 M118 58 L186 30 M118 58 L186 86 M118 86 L186 58 M118 86 L186 86"/>
+    </g>
+    <path class="line flip-a" d="M56 58 L118 30 L186 58"/>
+    <path class="line flip-b" d="M56 86 L118 58 L186 30"/>
+    <g class="dim">
+      <circle cx="56" cy="30" r="4"/><circle cx="56" cy="58" r="4"/><circle cx="56" cy="86" r="4"/>
+      <circle cx="118" cy="30" r="4"/><circle cx="118" cy="58" r="4"/><circle cx="118" cy="86" r="4"/>
+      <circle cx="186" cy="30" r="4"/><circle cx="186" cy="58" r="4"/><circle cx="186" cy="86" r="4"/>
+    </g>`,
+
+  // how far a classical surrogate reaches before the device is needed
+  boundary: `
+    <line class="hair" x1="26" y1="86" x2="228" y2="86"/>
+    <g class="hair">
+      <line x1="46"  y1="86" x2="46"  y2="92"/><line x1="82"  y1="86" x2="82"  y2="92"/>
+      <line x1="118" y1="86" x2="118" y2="92"/><line x1="154" y1="86" x2="154" y2="92"/>
+      <line x1="190" y1="86" x2="190" y2="92"/><line x1="226" y1="86" x2="226" y2="92"/>
+    </g>
+    <g class="breathe" style="transform-origin:26px 0">
+      <rect class="band" x="26" y="26" width="118" height="60"/>
+      <line x1="144" y1="22" x2="144" y2="90" stroke="var(--accent)" stroke-width="2"/>
+      <circle class="acc" cx="144" cy="22" r="3.4"/>
+    </g>
+    <circle class="dim" cx="176" cy="46" r="3"/>
+    <circle class="dim" cx="202" cy="60" r="3"/>`,
+};
+
+/* ---- render the boxes ---- */
+(function(){
+  const host = document.getElementById("clist");
+  const NS = "http://www.w3.org/2000/svg";
+
+  CHALLENGES.forEach(c => {
+    const row = document.createElement(c.href ? "a" : "div");
+    row.className = "crow" + (c.status === "open" ? "" : " soon");
+    if (c.href) row.href = c.href;
+
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("class", "viz");
+    svg.setAttribute("viewBox", "0 0 250 116");
+    svg.setAttribute("aria-hidden", "true");     // decorative: the text says it
+    svg.innerHTML = VIZ[c.viz] || "";
+
+    const body = document.createElement("div");
+    const nm = document.createElement("div"); nm.className = "nm";
+    nm.append(document.createTextNode(c.name));
+    const sm = document.createElement("small"); sm.textContent = c.track; nm.append(sm);
+
+    const de = document.createElement("div"); de.className = "de"; de.textContent = c.desc;
+
+    const mt = document.createElement("div"); mt.className = "mt";
+    const b = document.createElement("b"); b.textContent = "Metric: ";
+    mt.append(b, document.createTextNode(c.metric + " · record " + c.record));
+
+    body.append(nm, de, mt);
+
+    const side = document.createElement("div"); side.className = "side";
+    const bd = document.createElement("span");
+    bd.className = "badge" + (c.status === "open" ? " open" : "");
+    if (c.status === "open") bd.append(document.createElement("i"));
+    bd.append(document.createTextNode(c.status === "open" ? "Active" : "Coming soon"));
+    const ac = document.createElement("div"); ac.className = "act"; ac.textContent = c.action;
+    side.append(bd, ac);
+
+    row.append(svg, body, side);
+    host.append(row);
+  });
+
+  /* only animate what is on screen */
+  const vizzes = [...host.querySelectorAll(".viz")];
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(es => es.forEach(e =>
+      e.target.classList.toggle("run", e.isIntersecting)), { threshold: .25 });
+    vizzes.forEach(v => io.observe(v));
+  } else {
+    vizzes.forEach(v => v.classList.add("run"));
+  }
+})();
+</script>
+</body></html>

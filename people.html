@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/omni.css">
+<title>People — NTU QID Lab</title>
+<meta name="theme-color" content="#eeece7">
+<style>
+/* people.html — page-unique only; the system lives in assets/omni.css */
+.section{padding:88px 0;border-top:1px solid var(--hair);display:grid;grid-template-columns:.34fr 1.66fr;gap:70px}
+.hero .lead{font-size:18px;line-height:1.65;color:var(--muted);max-width:800px;margin:36px 0 0}
+.statement{font-family:var(--display);font-weight:600;font-size:clamp(36px,4vw,58px);line-height:1.1;letter-spacing:-.032em;margin:0;max-width:1050px}
+.statement em{font-style:normal;color:var(--accent-ink)}
+.group{margin-bottom:48px}.group:last-child{margin-bottom:0}
+.group-title{display:flex;justify-content:space-between;align-items:end;margin-bottom:16px}
+.group-title h3{font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin:0;color:var(--muted);font-weight:600}
+.group-title span{font:10px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.people-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.person{min-height:230px;padding:26px;background:var(--card);border:1px solid var(--hair);border-radius:4px;
+ box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:space-between;transition:.24s}
+.person:hover{transform:translateY(-2px);border-color:var(--accent)}
+.role{font:10px var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--accent-ink)}
+.person h4{font-family:var(--display);font-size:28px;font-weight:600;line-height:1.14;letter-spacing:-.03em;margin:0 0 10px}
+.person p{font-size:12.5px;line-height:1.6;color:var(--muted);margin:0;max-width:36ch}
+.meta{font:9px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:14px}
+.collab-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.collab{min-height:160px;padding:26px;background:var(--card);border:1px solid var(--hair);border-radius:4px;
+ box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:flex-end}
+.collab h4{font-family:var(--display);font-size:28px;font-weight:600;line-height:1.14;letter-spacing:-.03em;margin:0}
+.collab span{font:10px var(--mono);text-transform:uppercase;color:var(--muted);letter-spacing:.1em}
+@media(max-width:980px){.section{grid-template-columns:1fr;gap:30px}.people-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.people-grid,.collab-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="p-lab">
+<div class="noise"></div>
+<div class="shell">
+<nav>
+<a class="brand" href="index.html">OMNI</a>
+<div class="navlinks">
+<a href="omniqc.html">OmniQC</a>
+<a href="omniqec.html">OmniQEC</a>
+<a href="omniqst.html">OmniQST</a>
+<a class="active" href="people.html">People</a>
+</div>
+</nav>
+
+<section class="hero">
+<div class="eyebrow">NTU QID Lab · Quantum Intelligence Discovery Lab</div>
+<h1>The people<br>behind OMNI.</h1>
+<p class="lead">QID Lab brings together researchers working across quantum intelligence, autonomous scientific discovery, quantum error correction, and trustworthy quantum software. OMNI is built as a shared research platform across these directions.</p>
+</section>
+
+<section class="section">
+
+<div>
+<h2>One lab, multiple directions.</h2>
+
+<div class="group">
+<div class="group-title"><h3>Principal Investigator</h3><span>QID Lab</span></div>
+<div class="people-grid">
+<div class="person">
+<div class="role">Principal Investigator</div>
+<div><h4>Yuxuan Du</h4><p>Assistant Professor at NTU. Research spans quantum AI, quantum learning, autonomous scientific discovery, quantum error correction, and trustworthy quantum software.</p><div class="meta">NTU · QID Lab</div></div>
+</div>
+</div>
+</div>
+
+<div class="group">
+<div class="group-title"><h3>Postdoctoral Researchers</h3><span>Research staff</span></div>
+<div class="people-grid">
+<div class="person"><div class="role">Postdoctoral Researcher</div><div><h4>Ge Yan</h4><p>Research on AI for quantum computing, with emphasis on quantum error correction, decoding, and autonomous QEC discovery.</p><div class="meta">QEC · AI for Quantum</div></div></div>
+<div class="person"><div class="role">Postdoctoral Researcher</div><div><h4>Xinbiao Wang</h4><p>Research on quantum machine learning and quantum intelligence, contributing to learning-based quantum algorithms and systems.</p><div class="meta">Quantum AI · QML</div></div></div>
+<div class="person"><div class="role">Postdoctoral Researcher</div><div><h4>Kaining Zhang</h4><p>Postdoctoral researcher at QID Lab contributing to the lab's quantum intelligence and autonomous discovery research programme.</p><div class="meta">QID Lab</div></div></div>
+</div>
+</div>
+
+<div class="group">
+<div class="group-title"><h3>Students</h3><span>PhD / Research students</span></div>
+<div class="people-grid">
+<div class="person"><div class="role">Student Researcher</div><div><h4>Runchen Zhang</h4><p>Student researcher contributing to QID Lab projects in quantum computing and AI-enabled scientific discovery.</p></div></div>
+<div class="person"><div class="role">Student Researcher</div><div><h4>Pengyue Ma</h4><p>Student researcher contributing to QID Lab projects in quantum computing and AI-enabled scientific discovery.</p></div></div>
+<div class="person"><div class="role">Student Researcher</div><div><h4>Shanchuan Li</h4><p>Student researcher contributing to QID Lab projects in quantum computing and AI-enabled scientific discovery.</p></div></div>
+<div class="person"><div class="role">Student Researcher</div><div><h4>Zhenhao Zhong</h4><p>Student researcher contributing to QID Lab projects in quantum computing and AI-enabled scientific discovery.</p></div></div>
+<div class="person"><div class="role">Student Researcher</div><div><h4>Yiming Lu</h4><p>Student researcher at QID Lab working on quantum computing and intelligent scientific systems.</p></div></div>
+<div class="person"><div class="role">Student Researcher</div><div><h4>Yujin Song</h4><p>Student researcher at QID Lab working on quantum computing and intelligent scientific systems.</p></div></div>
+<div class="person"><div class="role">Student Researcher</div><div><h4>Yutian Zhou</h4><p>Student researcher at QID Lab working on quantum computing and intelligent scientific systems.</p></div></div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section class="section">
+
+<div>
+<h2>Research beyond the lab.</h2>
+<div class="collab-grid">
+<div class="collab"><h4>Hanqin Zhao</h4><span>Collaborator</span></div>
+<div class="collab"><h4>Sakka Kenya</h4><span>Collaborator</span></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+
+<div>
+<p class="statement">We build <em>intelligent systems for quantum discovery</em> — from algorithms and error correction to scientific agents and trustworthy software.</p>
+</div>
+</section>
+
+<footer>
+<span class="lab"><img class="ntu" src="assets/ntu-logo.svg" alt="Nanyang Technological University" onerror="this.remove()">NTU QID Lab · Quantum Intelligence Discovery Lab</span>
+<span>OMNI · 2026</span>
+</footer>
+</div>
+</body>
+</html>

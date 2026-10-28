@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/omni.css">
+<title>OmniQEC — QEC Research Platform</title><meta name="theme-color" content="#eeece7"><style>
+/* omniqec.html — page-unique only; the system lives in assets/omni.css */
+.tr{grid-template-columns:1.4fr .8fr .8fr .8fr .8fr .8fr}
+.scheme{position:relative}
+.subhead{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:-.03em;margin:62px 0 22px}
+</style></head>
+<body class="p-qec"><div class="noise"></div><div class="shell">
+<nav>
+<a class="brand" href="index.html">OMNI</a>
+<div class="navlinks"><a href="omniqc.html">OmniQC</a><a class="active" href="omniqec.html">OmniQEC</a><a href="omniqst.html">OmniQST</a><a href="people.html">People</a></div>
+</nav>
+
+<section class="hero">
+<div>
+<h1>OmniQEC<br><span class="ghost">build reliability.</span></h1>
+<p><b>OmniQEC</b> is an open research platform for discovering, evaluating, and deploying quantum error-correction stacks — from code search to syndrome circuits, decoders, and hardware execution.</p>
+</div>
+<div class="hero-side">
+<div class="statusbox">
+<div class="topline"><span><i class="statusdot"></i>Platform status</span><span>Research preview</span></div>
+<div class="big">One QEC stack.<br>Every layer measurable.</div>
+<p>Code + syndrome circuit + decoder + noise + hardware target + evaluation protocol.</p>
+</div>
+</div>
+</section>
+
+<div class="tabs">
+<button data-panel="overview" class="active">Overview</button><button data-panel="discover">Discover</button><button data-panel="decoders">Decoders</button><button data-panel="circuits">Circuits</button><button data-panel="deploy">Deploy</button><button data-panel="leaderboard">Leaderboard</button><button data-panel="models">Models</button>
+</div>
+
+<section id="overview" class="platform">
+<div class="section-head"><div><h2>From search space to executable fault-tolerant stacks.</h2><p>OmniQEC treats QEC as a full-stack optimization problem. A code is not useful in isolation; the circuit, decoder, noise model, and hardware constraints determine whether it is actually good.</p></div></div>
+<div class="scheme">
+<div class="step"><div class="num">01</div><h3>Search</h3><p>Explore code families and constrained construction spaces.</p></div>
+<div class="step"><div class="num">02</div><h3>Construct</h3><p>Build candidate codes and structural representations.</p></div>
+<div class="step"><div class="num">03</div><h3>Compile</h3><p>Synthesize syndrome extraction and schedules.</p></div>
+<div class="step"><div class="num">04</div><h3>Decode</h3><p>Attach classical or learned decoding backends.</p></div>
+<div class="step"><div class="num">05</div><h3>Evaluate</h3><p>Measure LER, threshold, latency, depth, and overhead.</p></div>
+<div class="step"><div class="num">06</div><h3>Deploy</h3><p>Map the stack to hardware-aware execution targets.</p></div>
+</div>
+<h3 class="subhead">A platform designed to keep expanding.</h3>
+<div class="modules">
+<a class="module" href="#discover"><div class="k">Live</div><div><h3>Code Discovery</h3><p>Search practical QEC codes under qubit, distance, check-weight, and hardware constraints.</p><div class="go">Open discover ↗</div></div></a>
+<a class="module" href="#decoders"><div class="k">Expanding</div><div><h3>Decoder Lab</h3><p>Benchmark MWPM, BP-family methods, and learned decoders under unified protocols.</p><div class="go">Compare decoders ↗</div></div></a>
+<a class="module" href="#circuits"><div class="k">In development</div><div><h3>Circuit Lab</h3><p>Generate and improve syndrome-extraction circuits, ancilla assignment, and scheduling.</p><div class="go">Explore circuits ↗</div></div></a>
+<a class="module" href="#deploy"><div class="k">Roadmap</div><div><h3>Hardware Deploy</h3><p>Export a complete QEC stack to supported backends with hardware-aware compilation.</p><div class="go">Deployment roadmap ↗</div></div></a>
+<a class="module" href="#leaderboard"><div class="k">Planned public benchmark</div><div><h3>Leaderboard</h3><p>Compare codes, decoders, circuits, and eventually full QEC stacks under fixed evaluation settings.</p><div class="go">View benchmark design ↗</div></div></a>
+<a class="module" href="#models"><div class="k">Open research</div><div><h3>Models & Backbones</h3><p>Open model checkpoints, reference decoders, schemas, and reproducible evaluation artifacts.</p><div class="go">Open resources ↗</div></div></a>
+</div>
+</section>
+
+
+
+<section id="discover" class="platform">
+<div class="section-head"><div><h2>Search for a QEC stack under your constraints.</h2><p>This is the working surface for the current OmniQEC code-discovery direction.</p></div></div>
+<div class="console">
+<div class="sidebar">
+<h3>Search constraints</h3>
+<div class="field"><label>Physical qubit budget</label><div class="input"><span>≤ 240</span><span>⌄</span></div></div>
+<div class="field"><label>Code family</label><div class="input"><span>BB · TB · LP · GLP</span><span>⌄</span></div></div>
+<div class="field"><label>Target logical qubits</label><div class="input"><span>k ≥ 12</span><span>⌄</span></div></div>
+<div class="field"><label>Noise model</label><div class="input"><span>Circuit-level</span><span>⌄</span></div></div>
+<div class="field"><label>Objective</label><div class="input"><span>Minimize logical error rate</span><span>⌄</span></div></div>
+<div class="runbtn">RUN OMNIQEC SEARCH</div>
+</div>
+<div class="workspace">
+<div class="bar"><span>Candidate workspace</span><span>3 representative outputs</span></div>
+<div class="pipeline">
+<div class="task"><div class="tick">✓</div><div><b>Candidate OQEC-001</b><small>qLDPC · hardware budget satisfied · decoder attached</small></div><div class="state">Evaluated</div></div>
+<div class="task"><div class="tick">✓</div><div><b>Candidate OQEC-002</b><small>lower proxy score · circuit-level evaluation queued</small></div><div class="state">Screened</div></div>
+<div class="task"><div class="tick">↻</div><div><b>Candidate OQEC-003</b><small>syndrome circuit compilation in progress</small></div><div class="state">Compiling</div></div>
+</div>
+<div class="codebox" style="margin-top:24px"><span class="c"># future Python API</span><br>
+<span class="a">stack</span> = omniqec.search(<br>
+&nbsp;&nbsp;max_qubits=240,<br>&nbsp;&nbsp;k_min=12,<br>&nbsp;&nbsp;objective=<span class="a">"logical_error_rate"</span>,<br>&nbsp;&nbsp;noise=<span class="a">"circuit_level"</span><br>)<br><br>
+stack.evaluate()<br>stack.export(<span class="a">"stim"</span>)
+</div>
+</div>
+</div>
+</section>
+
+<section id="decoders" class="platform">
+<div class="section-head"><div><h2>The decoder is part of the code.</h2><p>OmniQEC will benchmark classical and learned decoders under the same code, noise, circuit, and latency settings rather than treating decoder performance as a separate afterthought.</p></div></div>
+<div class="tablewrap"><div class="table">
+<div class="tr head"><div>Decoder</div><div>Type</div><div>Codes</div><div>Latency</div><div>Training</div><div>Status</div></div>
+<div class="tr"><div>MWPM</div><div>Classical</div><div>Surface-like</div><div>Reference</div><div>None</div><div class="rank">Baseline</div></div>
+<div class="tr"><div>BP / BP-OSD</div><div>Classical</div><div>qLDPC</div><div>Configurable</div><div>None</div><div class="rank">Integrated</div></div>
+<div class="tr"><div>Neural decoder</div><div>Learned</div><div>Expandable</div><div>GPU / FPGA target</div><div>Required</div><div class="rank">Research</div></div>
+<div class="tr"><div>Foundation decoder</div><div>Learned</div><div>Multi-code</div><div>Target: low latency</div><div>Pretrained</div><div class="rank">Roadmap</div></div>
+</div></div>
+</section>
+
+<section id="circuits" class="platform">
+<div class="section-head"><div><h2>From parity checks to executable syndrome extraction.</h2><p>This module is reserved for syndrome-circuit synthesis and optimization: ancilla assignment, scheduling, hook-error control, depth reduction, and hardware-aware construction.</p></div></div>
+<div class="modules">
+<div class="module"><div class="k">Input</div><div><h3>Parity checks</h3><p>Hx / Hz, stabilizers, connectivity, ancilla budget.</p></div></div>
+<div class="module"><div class="k">Compiler</div><div><h3>Circuit synthesis</h3><p>Generate valid extraction circuits and schedules.</p></div></div>
+<div class="module"><div class="k">Optimization</div><div><h3>Fault-aware search</h3><p>Optimize depth, ancillas, hook errors, and logical performance.</p></div></div>
+</div>
+</section>
+
+<section id="deploy" class="platform">
+<div class="section-head"><div><h2>One-click deployment is the end state.</h2><p>The deployment layer will map a selected QEC stack to supported execution targets, including connectivity-aware compilation, native-gate translation, decoder integration, and export.</p></div></div>
+<div class="roadmap">
+<div class="road"><div class="phase">Phase 01</div><h4>Portable stack schema</h4><p>Unified representation for code, circuit, decoder, and noise settings.</p></div>
+<div class="road"><div class="phase">Phase 02</div><h4>Simulator export</h4><p>Stim / QASM / CUDA-Q / Qiskit compatible artifacts.</p></div>
+<div class="road"><div class="phase">Phase 03</div><h4>Hardware mapping</h4><p>Connectivity, scheduling, and native-gate constraints.</p></div>
+<div class="road"><div class="phase">Phase 04</div><h4>One-click run</h4><p>End-to-end execution and logical-performance report.</p></div>
+</div>
+</section>
+
+<section id="leaderboard" class="platform">
+<div class="section-head"><div><h2>Benchmark the stack, not just the code.</h2><p>The planned public leaderboard will separate code quality, decoder quality, circuit quality, and full-stack performance.</p></div></div>
+<div class="tablewrap"><div class="table">
+<div class="tr head"><div>Track</div><div>Fixed</div><div>Varied</div><div>Primary metric</div><div>Secondary</div><div>Status</div></div>
+<div class="tr"><div>Code leaderboard</div><div>decoder + noise</div><div>code</div><div>LER</div><div>overhead</div><div class="rank">Designing</div></div>
+<div class="tr"><div>Decoder leaderboard</div><div>code + circuit</div><div>decoder</div><div>LER</div><div>latency</div><div class="rank">Designing</div></div>
+<div class="tr"><div>Full-stack leaderboard</div><div>hardware target</div><div>entire stack</div><div>logical performance</div><div>resources</div><div class="rank">Roadmap</div></div>
+</div></div>
+</section>
+
+<section id="models" class="platform">
+<div class="section-head"><div><h2>Backbones, checkpoints, and reproducible artifacts.</h2><p>This section is designed to host the open-source OmniQEC backbone, decoder checkpoints, code instances, benchmark configs, and hardware export schemas as they are released.</p></div></div>
+<div class="codebox"><span class="c"># planned package structure</span><br>
+omniqec/<br>
+├── codes/<br>
+├── decoders/<br>
+├── circuits/<br>
+├── benchmarks/<br>
+├── backbones/<br>
+└── deploy/
+</div>
+</section>
+
+<footer><span>OMNI · OmniQEC</span><span class="lab"><img class="ntu" src="assets/ntu-logo.svg" alt="Nanyang Technological University" onerror="this.remove()">NTU QID Lab · Quantum Intelligence Discovery Lab</span></footer>
+</div><script src="assets/omni.js"></script>
+</body></html>

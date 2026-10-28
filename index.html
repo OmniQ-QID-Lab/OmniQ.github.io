@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/omni.css">
+<title>OMNI — The Autonomous Quantum Stack</title>
+<meta name="description" content="OMNI is a unified platform for autonomous discovery across quantum algorithms, error correction, and trustworthy software.">
+<meta name="theme-color" content="#eeece7">
+<style>
+/* index.html — front door only. Everything shared lives in assets/omni.css. */
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:1;background:
+ radial-gradient(circle at 70% 42%,transparent 0 20%,rgba(238,236,231,.10) 46%,rgba(238,236,231,.72) 100%),
+ linear-gradient(90deg,rgba(238,236,231,.94) 0%,rgba(238,236,231,.52) 44%,rgba(238,236,231,.06) 72%,rgba(238,236,231,.34) 100%)}
+.noise{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.035;mix-blend-mode:multiply;
+ background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
+.shell{z-index:3}
+nav{background:rgba(238,236,231,.72)}
+
+.hero{height:calc(100vh - 88px);min-height:640px;position:relative;display:flex;align-items:center}
+.hero-copy{width:min(1120px,87vw);transform:translateY(-2vh);will-change:transform}
+h1{max-width:15ch}
+.sub{font-size:clamp(15px,1.35vw,21px);line-height:1.6;max-width:700px;margin:38px 0 0 4px;
+ color:var(--muted);transition:opacity .32s ease,transform .32s ease}
+.sub b{color:var(--ink);font-weight:600}
+.hero.tip-on .sub{opacity:0;transform:translateY(-8px)}
+.sub .w{display:inline-block;opacity:0;transform:translateY(15px);
+ animation:wordin .66s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(.40s + var(--i)*.03s)}
+@keyframes wordin{to{opacity:1;transform:none}}
+.sub .k{position:relative;color:var(--kc);font-weight:600;white-space:nowrap}
+.sub .k:after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1.5px;background:var(--kc);
+ opacity:.42;transform:scaleX(0);transform-origin:0 50%;
+ animation:underin .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(1.05s + var(--ki)*.16s)}
+@keyframes underin{to{transform:none}}
+.sub .k.qc{--kc:#1b62b8}.sub .k.qec{--kc:#516b00}.sub .k.qst{--kc:#b32385}
+
+.bottom-rail{position:absolute;bottom:0;left:0;right:0;height:104px;border-top:1px solid var(--hair);
+ display:grid;grid-template-columns:1fr 1fr 1fr;backdrop-filter:blur(10px);background:rgba(238,236,231,.55)}
+.pillar{padding:19px 24px 18px 0;border-right:1px solid var(--hair);display:flex;align-items:center;
+ justify-content:space-between;transition:.35s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}
+.pillar:before{content:"";position:absolute;inset:0;
+ background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--c,var(--accent)) 12%,transparent),transparent);
+ transform:translateX(-120%);transition:.7s}
+.pillar:hover:before{transform:translateX(120%)}
+.pillar:nth-child(2),.pillar:nth-child(3){padding-left:24px}
+.pillar:last-child{border-right:0}
+.pillar .name{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:-.03em}
+.pillar .desc{font:10px var(--mono);text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-top:5px}
+.pillar .arr{font-size:24px;color:var(--muted);transition:.3s}
+.pillar:hover .arr{color:var(--c);transform:translate(4px,-4px)}
+.pillar[data-c=qc]{--c:#1b62b8}.pillar[data-c=qec]{--c:#516b00}.pillar[data-c=qst]{--c:#b32385}
+.pillar .line{display:none}
+.bottom-rail.focus .pillar{opacity:.38}
+.bottom-rail.focus .pillar.hot{opacity:1}
+.pillar.hot .name{color:var(--c)}
+.pillar.hot .arr{color:var(--c);transform:translate(4px,-4px)}
+
+.rail-tip{position:absolute;left:0;bottom:118px;z-index:4;pointer-events:none;opacity:0;
+ transform:translateY(12px);max-width:min(540px,42vw);
+ transition:opacity .34s cubic-bezier(.2,.8,.2,1),transform .34s cubic-bezier(.2,.8,.2,1),left .5s cubic-bezier(.2,.8,.2,1)}
+.rail-tip.on{opacity:1;transform:none}
+.rail-tip q{quotes:none;display:block;font-family:var(--display);font-weight:600;
+ font-size:clamp(26px,2.6vw,42px);line-height:1.1;letter-spacing:-.032em;color:var(--ink)}
+.rail-tip em{font-style:normal;color:var(--tipc,var(--accent-ink))}
+
+.reveal{opacity:0;transform:translateY(28px);animation:in 1.15s cubic-bezier(.17,.8,.2,1) forwards}
+.d1{animation-delay:.12s}.d3{animation-delay:.36s}
+@keyframes in{to{opacity:1;transform:none}}
+
+footer{position:relative;z-index:3}
+
+@media(min-width:851px) and (max-height:800px){
+ h1{font-size:clamp(56px,6.6vw,96px)}
+ .sub{margin-top:28px;font-size:clamp(15px,1.2vw,18px)}
+ .eyebrow{margin-bottom:18px}
+}
+@media(max-width:850px){
+ .hero{height:auto;min-height:auto;padding:72px 0 0;display:block}
+ .hero-copy{width:100%;transform:none}
+ h1{font-size:clamp(48px,13vw,92px)}
+ .bottom-rail{position:static;height:auto;grid-template-columns:1fr;margin-top:56px;
+  border-top:1px solid var(--hair);background:transparent;backdrop-filter:none}
+ .pillar{padding:15px 0!important;border-right:0;border-bottom:1px solid var(--hair)}
+ .pillar:last-child{border-bottom:0}
+ .rail-tip{display:none}
+ .pillar .line{display:block;font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:7px;max-width:36ch}
+}
+</style>
+</head>
+<body class="p-home">
+<canvas id="gl"></canvas>
+<div class="vignette"></div>
+<div class="noise"></div>
+
+<div class="shell">
+<nav>
+  <a class="brand" href="index.html">OMNI</a>
+  <div class="navlinks">
+    <a href="omniqc.html">OmniQC</a>
+    <a href="omniqec.html">OmniQEC</a>
+    <a href="omniqst.html">OmniQST</a>
+  <a href="people.html">People</a></div>
+</nav>
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow reveal">A unified AI-scientist platform for quantum computing</div>
+    <h1 class="reveal d1">The autonomous<br><span class="ghost">quantum stack.</span></h1>
+    <p class="sub"><b>OMNI</b> brings autonomous discovery to the three layers that determine whether quantum computing becomes useful: <span class="k qc">algorithms</span>, <span class="k qec">error correction</span>, and <span class="k qst">software trust</span>.</p>
+  </div>
+  <div class="rail-tip" id="railTip" aria-hidden="true"><q></q></div>
+
+  <div class="bottom-rail reveal d3">
+    <a class="pillar" href="omniqc.html" data-c="qc" data-line="&lt;em&gt;Discover&lt;/em&gt; what quantum computers should do.">
+      <div><div class="name">OmniQC</div><div class="desc">Algorithms · Discover</div><div class="line">Discover what quantum computers should do.</div></div><div class="arr">↗</div>
+    </a>
+    <a class="pillar" href="omniqec.html" data-c="qec" data-line="&lt;em&gt;Protect&lt;/em&gt; how they do it.">
+      <div><div class="name">OmniQEC</div><div class="desc">Error Correction · Protect</div><div class="line">Protect how they do it.</div></div><div class="arr">↗</div>
+    </a>
+    <a class="pillar" href="omniqst.html" data-c="qst" data-line="&lt;em&gt;Trust&lt;/em&gt; everything in between.">
+      <div><div class="name">OmniQST</div><div class="desc">Software · Trust</div><div class="line">Trust everything in between.</div></div><div class="arr">↗</div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>OMNI · 2026</span>
+  <span class="lab"><img class="ntu" src="assets/ntu-logo.svg" alt="Nanyang Technological University" onerror="this.remove()">NTU QID Lab · Quantum Intelligence Discovery Lab</span>
+</footer>
+</div>
+
+<script>
+const canvas = document.getElementById('gl');
+const gl = canvas.getContext('webgl', {antialias:false, alpha:false});
+if (!gl) document.body.classList.add('no-webgl');
+
+const vert = `
+attribute vec2 p;
+void main(){gl_Position=vec4(p,0.,1.);}
+`;
+
+const frag = `
+precision highp float;
+uniform vec2 r;
+uniform float t;
+uniform vec2 m;
+uniform float s;
+
+#define PI 3.14159265359
+
+float hash(vec2 p){
+  p=fract(p*vec2(123.34,456.21));
+  p+=dot(p,p+45.32);
+  return fract(p.x*p.y);
+}
+float noise(vec2 p){
+  vec2 i=floor(p),f=fract(p);
+  f=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),
+             mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
+}
+float fbm(vec2 p){
+  float v=0.,a=.5;
+  mat2 q=mat2(.8,-.6,.6,.8);
+  for(int i=0;i<5;i++){v+=a*noise(p);p=q*p*2.03+.13;a*=.5;}
+  return v;
+}
+float sdRing(vec2 p,float ra,float rb){
+  return abs(length(p)-ra)-rb;
+}
+// Light surface: we no longer accumulate light onto black. We build an ink
+// DENSITY and lay it onto paper, so the field darkens the page instead of
+// glowing out of it. tint() is the colour the ink takes at a given density.
+const vec3 PAPER = vec3(.933,.925,.906);   // #eeece7
+vec3 tint(float x){
+  vec3 washed = vec3(.60,.62,.63);         // faint warm grey at the edges
+  vec3 mid    = vec3(.30,.40,.52);         // slate blue through the body
+  vec3 deep   = vec3(.10,.20,.33);         // deepest folds
+  vec3 brand  = vec3(.29,.36,.02);         // olive, only at the peaks
+  vec3 a=mix(washed,mid,smoothstep(.05,.45,x));
+  a=mix(a,deep,smoothstep(.45,.86,x));
+  a=mix(a,brand,smoothstep(.88,1.,x)*.38);
+  return a;
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-.5*r.xy)/r.y;
+  vec2 mouse=(m-.5)*vec2(r.x/r.y,1.0);
+  float tt=t*.16;
+
+  // spatial focus on the right side
+  vec2 c=vec2(.46,.02)+mouse*.12;
+  vec2 p=uv-c;
+
+  // refractive flow field
+  float n1=fbm(p*2.2+vec2(tt,-tt*.6));
+  float n2=fbm(p*4.1+vec2(-tt*.7,tt*.9));
+  vec2 warp=vec2(n1-.5,n2-.5)*.16;
+  vec2 q=p+warp;
+
+  // volumetric aurora
+  float aura=0.;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    vec2 qq=q;
+    qq.y += sin(qq.x*(2.2+fi*.32)+tt*(1.4+fi*.22)+fi)*(.11+.018*fi);
+    float band=exp(-abs(qq.y+(.18-fi*.075))*7.5);
+    aura += band*(.12+.03*fi);
+  }
+  aura*=.55+.65*n1;
+
+  // nested luminous ellipses / quantum orbits
+  vec2 e=q;
+  e.x*=.72;
+  float ang=tt*.55;
+  mat2 rot=mat2(cos(ang),-sin(ang),sin(ang),cos(ang));
+  e=rot*e;
+  float ring1=exp(-abs(length(e)-.36)*115.);
+  float ring2=exp(-abs(length(e*vec2(.78,1.18))-.25)*125.);
+  float ring3=exp(-abs(length((rot*vec2(q.y,q.x))*vec2(.9,1.25))-.47)*105.);
+
+  // bright singular core
+  float core=exp(-length(q)*7.3);
+  float halo=exp(-length(q)*2.3);
+
+  // interference filaments
+  float fil=sin((length(q+warp*.7)*31.0) - tt*8. + n2*5.);
+  fil=pow(max(0.,fil),10.)*exp(-length(q)*1.9);
+
+  // sparse depth particles
+  float stars=0.;
+  vec2 suv=uv*vec2(1.25,1.);
+  for(int j=0;j<3;j++){
+    float fj=float(j);
+    vec2 cell=floor(suv*(10.+fj*5.));
+    vec2 gv=fract(suv*(10.+fj*5.))-.5;
+    float h=hash(cell+fj*17.);
+    vec2 off=vec2(hash(cell+3.1),hash(cell+7.7))-.5;
+    float d=length(gv-off*.72);
+    float blink=.55+.45*sin(t*(.45+h)+h*20.);
+    stars+=smoothstep(.04,.0,d)*step(.82,h)*blink*(.22+.16*fj);
+  }
+
+  float density=clamp(aura+ring1*.55+ring2*.35+ring3*.24+core*.7+fil*.22,0.,1.);
+  density += halo*.10 + stars*.13;
+  density = clamp(density,0.,1.);
+  density = pow(density,1.22);              // hold the paper open in the mid-tones
+
+  // clear the left for typography: fade the ink out, do not darken it
+  float leftMask=smoothstep(-.72,.30,uv.x);
+  density *= mix(.04,1.,leftMask);
+
+  // scroll-driven deconstruction
+  float fade=1.-smoothstep(.0,1.1,s);
+  density *= .70+.30*fade;
+
+  // vignette now bleeds back to paper at the edges
+  float vig=1.-smoothstep(.42,1.10,length(uv*vec2(.78,1.)));
+  density *= .28+.72*vig;
+
+  vec3 col=mix(PAPER,tint(density),density*.86);
+  col=pow(col,vec3(1.02));                  // a touch of contrast, no HDR curve
+
+  gl_FragColor=vec4(col,1.);
+}
+`;
+
+function compile(type, src){
+  const sh=gl.createShader(type); gl.shaderSource(sh,src); gl.compileShader(sh);
+  if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(sh));
+  return sh;
+}
+const prog=gl.createProgram();
+gl.attachShader(prog,compile(gl.VERTEX_SHADER,vert));
+gl.attachShader(prog,compile(gl.FRAGMENT_SHADER,frag));
+gl.linkProgram(prog); gl.useProgram(prog);
+
+const buf=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+const pos=gl.getAttribLocation(prog,'p');
+gl.enableVertexAttribArray(pos); gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
+
+const ur=gl.getUniformLocation(prog,'r'), ut=gl.getUniformLocation(prog,'t'), um=gl.getUniformLocation(prog,'m'), us=gl.getUniformLocation(prog,'s');
+let mx=.5,my=.5,tx=.5,ty=.5,start=performance.now();
+
+function resize(){
+  const d=Math.min(devicePixelRatio||1,1.8);
+  canvas.width=innerWidth*d; canvas.height=innerHeight*d;
+  canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px';
+  gl.viewport(0,0,canvas.width,canvas.height);
+}
+resize(); addEventListener('resize',resize);
+addEventListener('pointermove',e=>{tx=e.clientX/innerWidth; ty=1-e.clientY/innerHeight;});
+
+function render(now){
+  mx+=(tx-mx)*.035; my+=(ty-my)*.035;
+  gl.uniform2f(ur,canvas.width,canvas.height);
+  gl.uniform1f(ut,(now-start)/1000);
+  gl.uniform2f(um,mx,my);
+  gl.uniform1f(us,scrollY/innerHeight);
+  gl.drawArrays(gl.TRIANGLES,0,6);
+  requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+
+// ---- lead paragraph: stagger each word in ----
+(function(){
+  const sub=document.querySelector('.sub');
+  if(!sub) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const out=[]; let i=0, ki=0;
+  [...sub.childNodes].forEach(node=>{
+    if(node.nodeType===3){
+      node.data.split(/(\s+)/).forEach(tok=>{
+        if(!tok) return;
+        if(/^\s+$/.test(tok)){ out.push(document.createTextNode(tok)); return; }
+        const w=document.createElement('span');
+        w.className='w'; w.style.setProperty('--i',i++); w.textContent=tok;
+        out.push(w);
+      });
+    } else {
+      const w=document.createElement('span');
+      w.className='w'; w.style.setProperty('--i',i++);
+      if(node.classList && node.classList.contains('k')) node.style.setProperty('--ki',ki++);
+      w.appendChild(node.cloneNode(true));
+      out.push(w);
+    }
+  });
+  sub.replaceChildren(...out);
+})();
+
+// ---- rail: hover reveals what each direction is for ----
+(function(){
+  const rail=document.querySelector('.bottom-rail');
+  const tip=document.getElementById('railTip');
+  if(!rail||!tip) return;
+  const q=tip.querySelector('q');
+  const pillars=[...rail.querySelectorAll('.pillar')];
+  const hero=document.querySelector('.hero');
+  let active=null;
+
+  function place(p){
+    const host=tip.offsetParent||document.querySelector('.hero');
+    const hr=host.getBoundingClientRect(), pr=p.getBoundingClientRect();
+    const max=hr.width-tip.offsetWidth;
+    tip.style.left=Math.max(0,Math.min(pr.left-hr.left,max))+'px';
+  }
+  function show(p){
+    if(active===p) return;
+    active=p;
+    q.innerHTML=p.dataset.line||'';
+    tip.style.setProperty('--tipc',getComputedStyle(p).getPropertyValue('--c').trim()||'var(--accent)');
+    pillars.forEach(x=>x.classList.toggle('hot',x===p));
+    rail.classList.add('focus');
+    hero.classList.add('tip-on');
+    place(p);                      // measure once text is in
+    requestAnimationFrame(()=>{ place(p); tip.classList.add('on'); });
+  }
+  function hide(){
+    active=null;
+    tip.classList.remove('on');
+    rail.classList.remove('focus');
+    hero.classList.remove('tip-on');
+    pillars.forEach(x=>x.classList.remove('hot'));
+  }
+  if(matchMedia('(hover:hover)').matches){
+    pillars.forEach(p=>{
+      p.addEventListener('pointerenter',()=>show(p));
+      p.addEventListener('focus',()=>show(p));
+    });
+    rail.addEventListener('pointerleave',hide);
+    rail.addEventListener('focusout',e=>{ if(!rail.contains(e.relatedTarget)) hide(); });
+  }
+  addEventListener('resize',()=>{ if(active) place(active); },{passive:true});
+})();
+
+// premium parallax and scroll choreography
+let raf=false;
+addEventListener('scroll',()=>{
+  if(raf)return; raf=true;
+  requestAnimationFrame(()=>{
+    const y=scrollY, vh=innerHeight;
+    const hero=document.querySelector('.hero-copy');
+    // on the stacked mobile layout the rail sits in normal flow, so parallax
+    // would drag the copy over it — leave the hero alone there.
+    if (matchMedia('(max-width:850px)').matches) {
+      hero.style.transform=''; hero.style.opacity=''; raf=false; return;
+    }
+    hero.style.transform=`translate3d(0,${Math.min(y*.11,58)-vh*.02}px,0) scale(${1-Math.min(y/vh,.6)*.025})`;
+    hero.style.opacity=String(Math.max(.12,1-y/(vh*.95)));
+    raf=false;
+  });
+});
+</script>
+</body>
+</html>
