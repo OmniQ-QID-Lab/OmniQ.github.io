@@ -110,9 +110,21 @@
     }
   }
 
+  /* Motifs (.viz) animate only while on screen — and a motif inside a hidden
+     panel is not on screen, so it starts when its tab is opened. */
+  function initViz() {
+    const vs = [...document.querySelectorAll(".viz")];
+    if (!vs.length) return;
+    if (!("IntersectionObserver" in window)) { vs.forEach(v => v.classList.add("run")); return; }
+    const io = new IntersectionObserver(es => es.forEach(e =>
+      e.target.classList.toggle("run", e.isIntersecting)), { threshold: .25 });
+    vs.forEach(v => io.observe(v));
+  }
+
+  function init() { initTabs(); initViz(); }
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initTabs);
+    document.addEventListener("DOMContentLoaded", init);
   } else {
-    initTabs();
+    init();
   }
 })();

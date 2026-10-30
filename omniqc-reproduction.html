@@ -1,617 +1,92 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/omni.css">
-<title>OmniQC · Paper Reproduction — can your agent reproduce it?</title>
-<meta name="description" content="OmniQC is an open challenge for autonomous reproduction of quantum-computing research. Submit an agent, move the frontier of reproduction score against cost per paper.">
+<title>Paper-to-result reproduction — OmniQC</title>
+<meta name="description" content="Can AI scientists reproduce published quantum research? OmniQ turns published studies into executable reproduction tasks, and Residual Agents (RA) learn from every verified repair.">
 <meta name="theme-color" content="#eeece7"><style>
-/* omniqc-reproduction.html — challenge page; system in assets/omni.css */
-.tr{grid-template-columns:26px 1.5fr .9fr .9fr .8fr .8fr .9fr}
-.checks{grid-template-columns:repeat(2,1fr)}
+/* omniqc-reproduction.html — the paper behind paper-to-result reproduction.
+   Paper-panel layout (.pp) and the motif box (.qviz) are shared in assets/omni.css;
+   this page choreographs its one motif. */
 
-/* one verified submission, in detail */
-.subcard{display:grid;grid-template-columns:.9fr 1.1fr;background:var(--card);border:1px solid var(--hair);
- border-radius:4px;box-shadow:var(--shadow);overflow:hidden}
-.subL{padding:30px 32px;border-right:1px solid var(--hair);background:var(--card-2)}
-.subR{padding:30px 32px}
-.subL .k,.subR .k{font:10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.subL .big{font-family:var(--display);font-weight:600;font-size:clamp(38px,4vw,54px);
- letter-spacing:-.042em;line-height:1;margin:20px 0 0}
-.subL .who{font-size:15px;font-weight:600;margin-top:18px}
-.subL .when{font:10px var(--mono);color:var(--muted);margin-top:7px;letter-spacing:.06em}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:12px 22px;margin-top:20px;align-items:baseline}
-.kv dt{font:9px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.kv dd{margin:0;font-size:13px;font-variant-numeric:tabular-nums}
-.subR p{font-size:13px;line-height:1.65;color:var(--muted);margin:16px 0 0;max-width:52ch}
-
-/* a sub-head inside a panel */
-.subhead{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:-.03em;margin:62px 0 18px}
-
-@media(max-width:980px){
- .checks{grid-template-columns:1fr}
- .subcard{grid-template-columns:1fr}
- .subL{border-right:0;border-bottom:1px solid var(--hair)}
-}
-@media(max-width:860px){ #prog{min-width:640px} }
+/* the motif: the paper's result goes through plan, execute and judge; the reproduced
+   points land on the paper's curve, the curve is redrawn, and it matches */
+.qviz .ref{fill:none;stroke:var(--dim);stroke-width:1.5;stroke-dasharray:3 3}
+.qviz .loop{fill:none;stroke:var(--dim);stroke-width:1.25}
+.qviz .back{fill:none;stroke:var(--dim);stroke-width:1.25;stroke-dasharray:3 3}
+.qviz .node{fill:var(--card);stroke:var(--dim);stroke-width:1.5}
+.qviz .act{fill:var(--accent);opacity:0}
+.qviz .pt,.qviz .match{transform-box:fill-box;transform-origin:center}
+.viz.run .a1{animation:ra1 5.4s ease-in-out infinite}
+.viz.run .a2{animation:ra2 5.4s ease-in-out infinite}
+.viz.run .a3{animation:ra3 5.4s ease-in-out infinite}
+.viz.run .pt{animation:rpt 5.4s ease-out infinite both}
+.viz.run .rline{animation:rline 5.4s ease-in-out infinite}
+.viz.run .match{animation:rmatch 5.4s ease-out infinite both}
+@keyframes ra1{0%,3%{opacity:0}9%{opacity:1}20%,100%{opacity:0}}
+@keyframes ra2{0%,11%{opacity:0}17%{opacity:1}28%,100%{opacity:0}}
+@keyframes ra3{0%,19%{opacity:0}25%{opacity:1}36%,100%{opacity:0}}
+@keyframes rpt{0%,34%{opacity:0;transform:scale(.3)}40%{opacity:1;transform:scale(1.25)}45%,100%{opacity:1;transform:scale(1)}}
+@keyframes rline{0%,58%{stroke-dashoffset:var(--len)}80%,100%{stroke-dashoffset:0}}
+@keyframes rmatch{0%,82%{opacity:0;transform:scale(.3)}89%{opacity:1;transform:scale(1.15)}95%,100%{opacity:1;transform:scale(1)}}
 </style></head>
 <body class="p-qc"><div class="noise"></div><div class="shell">
 <nav>
 <a class="brand" href="index.html">OMNI</a>
-<div class="navlinks"><a class="active" href="omniqc.html">OmniQC</a><a href="omniqec.html">OmniQEC</a><a href="omniqst.html">OmniQST</a><a href="people.html">People</a></div>
+<div class="navlinks"><a class="active" href="omniqc.html">OmniQC</a><a href="omniqec.html">OmniQEC</a><a href="omniqst.html">OmniQST</a><a href="people.html">About us</a></div>
 </nav>
 
 <section class="hero">
 <div>
-<div class="eyebrow"><a href="omniqc.html" style="color:var(--accent-ink)">← OmniQC</a> &nbsp;/&nbsp; Challenge 01 · Paper reproduction · Open</div>
-<h1>OmniQC<br><span class="ghost">can your agent reproduce it?</span></h1>
-<p><b>OmniQC</b> is an open challenge for AI scientists that reproduce quantum-computing research. Give an agent a paper; it must return a run that a stranger can execute and that lands on the paper's numbers. Every submission is scored on two axes at once — <b>how much it reproduced</b>, and <b>what it cost to get there</b> — and plotted against the current frontier.</p>
-</div>
-<div class="hero-side">
-<div class="statusbox">
-<div class="topline"><span><i class="statusdot"></i>Current frontier</span><span id="sbWho">RA4</span></div>
-<div class="figs">
-  <div class="fig"><div class="v" id="sbScore">—</div><div class="l">Reproduction score</div></div>
-  <div class="fig"><div class="v" id="sbCost">—</div><div class="l">Cost per paper</div></div>
-</div>
-<p>Beating the frontier means a higher score at the same cost, or the same score for less. Anything inside the curve is dominated.</p>
-</div>
+<div class="eyebrow"><a href="omniqc.html">← OmniQC</a> &nbsp;/&nbsp; Paper-to-result reproduction</div>
+<h1>From paper<br><span class="ghost">to result.</span></h1>
+<p>Can AI scientists drive the next wave of discovery in computational quantum science? We start where every outcome can be checked: given a full paper and a target result, an AI scientist must reconstruct the method, run it under a comparable budget and reproduce what the paper reports.</p>
 </div>
 </section>
 
-<div class="tabs">
-<button data-panel="overview" class="active">Overview</button><button data-panel="verify">Verification</button><button data-panel="frontier">Frontier</button><button data-panel="leaderboard">Leaderboard</button><button data-panel="submission">Latest entry</button><button data-panel="participate">Participate</button><button data-panel="propose">Propose</button><button data-panel="ra4">RA4 &amp; artefacts</button>
+<section class="platform pp">
+<div class="section-head paperhead"><div>
+<div class="k">Manuscript · 2026</div>
+<h2>Reimagining computational quantum research with AI scientists</h2>
+<p class="sub">A new paradigm in which published results become reusable scientific capabilities for autonomous discovery.</p>
+<p class="by">Yuxuan Du, Hanqing Zhao, Xinbiao Wang, Yiming Lu, Kaining Zhang, Dacheng Tao</p>
 </div>
-
-<section id="overview" class="platform">
-<div class="section-head"><div><h2>Reproduction is the one benchmark a research agent cannot fake.</h2><p>A paper is a claim plus enough detail to check it. Reproducing one forces an agent through the whole research loop — read the method, rebuild the setup, write code that runs, notice when a number is wrong, and fix it. There is no answer key to memorise and no partial credit for a convincing summary: either the run lands on the reported quantity or it does not.</p></div></div>
-<div class="modules">
-<a class="module" href="#frontier"><div class="k">The metric</div><div><h3>Two axes</h3><p>Reproduction score against cost per paper. One number alone is gameable; the pair is not.</p><div class="go">See the frontier ↗</div></div></a>
-<a class="module" href="#verify"><div class="k">The rules</div><div><h3>Eight checks</h3><p>A submission counts only if it executes clean, matches within tolerance, and hard-codes nothing.</p><div class="go">Read the checks ↗</div></div></a>
-<a class="module" href="#ra4"><div class="k">The first entry</div><div><h3>RA4</h3><p>Our own AI scientist, on the board as the reference point for everyone else to beat.</p><div class="go">Open RA4 ↗</div></div></a>
+<svg class="viz qviz" viewBox="0 0 360 168" aria-hidden="true" focusable="false">
+<!-- the paper, and the result it reports -->
+<rect class="doc" x="18" y="46" width="50" height="70" rx="3"/>
+<g class="code"><line x1="25" y1="56" x2="55" y2="56"/><line x1="25" y1="63" x2="46" y2="63"/></g>
+<path class="ref" d="M25 76 C34 90 44 100 60 104"/>
+<path class="feed" d="M72 81 L94 81"/>
+<!-- plan, execute, judge: the loop an AI scientist runs until the result holds -->
+<path class="loop" d="M108 81 L140 54 L172 81"/>
+<path class="back" d="M172 81 C160 110 120 110 108 81"/>
+<circle class="node" cx="108" cy="81" r="6"/><circle class="node" cx="140" cy="54" r="6"/><circle class="node" cx="172" cy="81" r="6"/>
+<circle class="act a1" cx="108" cy="81" r="6"/><circle class="act a2" cx="140" cy="54" r="6"/><circle class="act a3" cx="172" cy="81" r="6"/>
+<path class="feed" d="M184 81 L204 81"/>
+<!-- the reproduced points land on the paper's curve, the curve is redrawn, and it matches -->
+<path class="hair" fill="none" d="M212 30 L212 126 L346 126"/>
+<path class="ref" d="M222 42 C250 82 282 102 334 110"/>
+<path class="line draw rline" style="--len:136" d="M222 42 C250 82 282 102 334 110"/>
+<g class="acc"><circle class="pt" cx="222" cy="42" r="3.6"/><circle class="pt" cx="243.6" cy="68" r="3.6" style="animation-delay:.25s"/><circle class="pt" cx="270.2" cy="88.7" r="3.6" style="animation-delay:.5s"/><circle class="pt" cx="301.1" cy="102.5" r="3.6" style="animation-delay:.75s"/><circle class="pt" cx="334" cy="110" r="3.6" style="animation-delay:1s"/></g>
+<circle class="ring match" cx="334" cy="110" r="9"/>
+</svg>
 </div>
-<h3 class="subhead">One paper in. One executable reproduction out.</h3>
-<p style="font-size:14px;line-height:1.65;color:var(--muted);max-width:74ch;margin:0 0 26px">The agent is handed a paper and a compute budget, and nothing else &mdash; no reference implementation, no expected values, no hints. Everything it spends is metered and reported alongside what it achieved.</p>
-<div class="scheme">
-<div class="step"><div class="num">01</div><h3>Read</h3><p>Parse the method, assumptions, setup, and the exact quantities to be recovered.</p></div>
-<div class="step"><div class="num">02</div><h3>Plan</h3><p>Construct a reproduction strategy and the dependency graph it implies.</p></div>
-<div class="step"><div class="num">03</div><h3>Implement</h3><p>Write executable code and the experimental scaffolding around it.</p></div>
-<div class="step"><div class="num">04</div><h3>Run</h3><p>Execute in a clean, metered environment and collect numerical evidence.</p></div>
-<div class="step"><div class="num">05</div><h3>Diagnose</h3><p>Locate discrepancies, broken assumptions, and components that silently failed.</p></div>
-<div class="step"><div class="num">06</div><h3>Reproduce</h3><p>Iterate until the targets are recovered, or document precisely why they cannot be.</p></div>
+<div class="paper">
+<div>
+<h3>Background</h3>
+<p>AI scientists are expanding automated research across scientific domains, yet turning the scientific record into a foundation for autonomous discovery remains elusive. <b>OmniQ</b>, an expert-audited virtual research environment, converts published studies in classical simulation, quantum algorithms and quantum-property characterization into executable reproduction tasks.</p>
+<p>Evaluated across five LLM-powered agentic systems and six third-party agent harnesses, current AI scientists often fail. Part of the gap lies in the record itself: in many studies the paper, the released code and the reported results disagree. Expert intervention turns such failures into successful reproductions, showing that the missing knowledge can be identified and reused.</p>
+<p><b>Residual Agents (RA)</b>, a self-improving AI scientist for quantum research, distils externally verified workflow repairs into reusable experience. Every reproduced result joins an extensible platform built on the model context protocol, so verified research workflows are directly accessible to AI scientists and new papers can keep being added.</p>
+<div class="links"><span class="soonpill"><i class="statusdot"></i>Preprint coming soon</span></div>
 </div>
-</section>
-
-
-
-
-
-<section id="verify" class="platform">
-<div class="section-head"><div><h2>Nothing reaches the frontier unverified.</h2><p>Each attempt is validated by the harness before it is scored, and the harness &mdash; not the submitter &mdash; reports what happened. A run that fails any check scores zero for that paper, however plausible its write-up looks &mdash; the same way a circuit that leaves garbage in an ancilla is not a circuit.</p></div></div>
-<div class="checks">
-  <div class="check"><div class="mk">&#10003;</div><div><h4>Runs clean, in isolation</h4><p>The submitted artefact builds and executes in a fresh container from a pinned environment, with no network and no access to other entries. No files from the agent&rsquo;s own session, no manual repair step.</p></div></div>
-  <div class="check"><div class="mk">&#10003;</div><div><h4>Lands within tolerance</h4><p>Every target quantity the paper reports must be recovered within the tolerance declared for that paper, not merely discussed in prose.</p></div></div>
-  <div class="check"><div class="mk">&#10003;</div><div><h4>Scored, not claimed</h4><p>The harness computes the score from the run&rsquo;s own artefacts. Numbers reported by the submission itself are ignored.</p></div></div>
-  <div class="check"><div class="mk">&#10003;</div><div><h4>Nothing hard-coded</h4><p>Expected values must not appear as literals. The harness re-runs with perturbed inputs; a result that does not move was never computed.</p></div></div>
-  <div class="check"><div class="mk">&#10003;</div><div><h4>Deterministic under seed</h4><p>Given the same seed the run reproduces itself. Stochastic quantities report a variance over repeated seeds rather than a single lucky draw.</p></div></div>
-  <div class="check"><div class="mk">&#10003;</div><div><h4>Fully metered</h4><p>Wall-clock, tokens, and tool calls are recorded by the harness &mdash; not self-reported &mdash; and converted to a single <code>cost per paper</code>.</p></div></div>
-  <div class="check"><div class="mk">&#10003;</div><div><h4>Held-out papers</h4><p>Scoring uses a held-out split that is rotated. A system tuned against the public split is measured on papers it has never seen.</p></div></div>
-  <div class="check"><div class="mk">&#10003;</div><div><h4>Published with its trace</h4><p>An accepted entry lands on the frontier together with the artefacts and the execution trace behind it, so anybody can go and check the claim.</p></div></div>
-</div>
-</section>
-
-<section id="frontier" class="platform">
-<div class="section-head"><div><h2>Frontier progress.</h2><p>Each mark is one system. The frontier is the set no other system beats on both axes at once — the staircase through them is the current state of the art. Moving it means going <b>up</b> (reproducing more) or <b>left</b> (spending less), and the interesting submissions do one without giving up the other.</p></div></div>
-
-<div class="chartcard">
-  <div class="chartbar">
-    <div class="ttl">Reproduction score vs cost per paper</div>
-    <div class="key">
-      <span><i style="background:var(--accent)"></i>On the frontier</span>
-      <span><i style="background:var(--dim)"></i>Dominated</span>
-      <span><i style="background:transparent;border:2px solid var(--ink);width:12px;height:12px"></i>Ours</span>
-    </div>
-  </div>
-  <div class="plotwrap">
-    <svg id="plot" class="plot" viewBox="0 0 960 520" role="img" aria-labelledby="plotTitle plotDesc"></svg>
-    <div class="tip" id="tip" role="status" aria-live="polite"></div>
-  </div>
-  <p class="note"><b>Placeholder data.</b> The numbers plotted here are illustrative and are not published results. The chart, the leaderboard and the status panel all read one array (<code>SYSTEMS</code>) at the top of this page's script — replace it and everything re-renders, including which points sit on the frontier, which is computed rather than hand-labelled. Full values are in the <a href="#leaderboard" style="color:var(--accent)">leaderboard table</a>.</p>
+<dl class="facts">
+<div><dt>Studies</dt><dd>59</dd><dd class="n">Published studies across classical simulation, quantum algorithms and quantum-property characterization, turned into reproduction tasks.</dd></div>
+<div><dt>Scientific record</dt><dd>18 of 60</dd><dd class="n">Curated studies whose paper, released code and reported results are inconsistent.</dd></div>
+<div><dt>Residual Agents</dt><dd>68% → 85%</dd><dd class="n">Reproduction success of DeepSeek V4.1 Flash, matching Claude Code with Opus 5 at a third of its cost.</dd></div>
+</dl>
 </div>
 </section>
 
-<section id="leaderboard" class="platform">
-<div class="section-head"><div><h2>Every entry, every number.</h2><p>The same data as the chart, sortable, so nothing in the frontier is reachable only by hovering. Rank is by reproduction score; use the column headers to sort by cost or execution rate instead.</p></div></div>
-<div class="chartcard" style="margin-bottom:22px">
-  <div class="chartbar">
-    <div class="ttl">Record reproduction score over time</div>
-    <div class="key">
-      <span><i style="background:var(--accent)"></i>New record</span>
-      <span><i style="background:var(--dim)"></i>Did not beat the record</span>
-    </div>
-  </div>
-  <div class="plotwrap">
-    <svg id="prog" class="plot" viewBox="0 0 880 360" role="img" aria-labelledby="progT progD"></svg>
-    <div class="tip" id="tip2" role="status" aria-live="polite"></div>
-  </div>
-  <div class="figcap">Fig. 1 &middot; Paper Reproduction Benchmark</div>
+<footer><span>OMNI · OmniQC · Paper-to-result reproduction</span><a class="lab" href="people.html"><img class="ntu" src="assets/ntu-logo.svg" alt="Nanyang Technological University" onerror="this.remove()"><img class="qid" src="assets/qid-lab-mark.png" alt="" width="24" height="24">NTU QID Lab · Quantum Intelligence &amp; Discovery Lab</a></footer>
 </div>
-
-<div class="tablewrap"><div class="table" id="lb"></div></div>
-<p class="note" style="border:1px solid var(--hair);border-top:0;border-radius:0 0 4px 4px"><b>Placeholder data.</b> Figures on this page are illustrative, not published results. Fig. 1 reads the <code>PROGRESS</code> array and the table reads <code>SYSTEMS</code>, both at the top of this page&rsquo;s script.</p>
-</section>
-
-<section id="submission" class="platform">
-<div class="section-head"><div><h2>What a verified entry looks like.</h2><p>Every accepted submission is published with the numbers the harness measured, the backbone that produced it, and a note on what actually changed &mdash; so a record is a claim someone else can go and check.</p></div></div>
-<div class="subcard">
-  <div class="subL">
-    <div class="k">Improvement on this entry</div>
-    <div class="big" id="dImp">&mdash;</div>
-    <div class="who" id="dWho">&mdash;</div>
-    <div class="when" id="dWhen">&mdash;</div>
-  </div>
-  <div class="subR">
-    <div class="k">Verified run</div>
-    <dl class="kv">
-      <dt>Challenge</dt><dd>Paper Reproduction Benchmark</dd>
-      <dt>Score</dt><dd id="dScore">&mdash;</dd>
-      <dt>Previous record</dt><dd id="dPrev">&mdash;</dd>
-      <dt>Backbone</dt><dd id="dModel">&mdash;</dd>
-      <dt>Status</dt><dd id="dStatus">&mdash;</dd>
-    </dl>
-    <p>The repair loop was given the harness&rsquo;s own diagnostic output instead of only the failing value, which let it localise a mis-set simulation parameter rather than re-deriving the method. Most of the gain came from papers that previously failed at execution rather than at accuracy.</p>
-  </div>
-</div>
-</section>
-
-<section id="participate" class="platform">
-<div class="section-head"><div><h2>Submissions open soon.</h2></div></div>
-<div class="cta">
-  <div>
-    <h3>Bring your own AI scientist.</h3>
-    <p>The challenge will accept any system that takes a paper and returns an executable reproduction — agent frameworks, fine-tuned models, or a human-in-the-loop pipeline, as long as everything it spends is metered. Entries run against the held-out split on our harness, and the resulting point lands on the frontier above whether or not it beats RA4.</p>
-  </div>
-  <div><span class="soonpill"><i class="statusdot"></i>Coming soon</span></div>
-</div>
-<div class="roadmap" style="margin-top:34px">
-<div class="road"><div class="phase">Phase 01</div><h4>Public split</h4><p>A first set of papers, tolerances, and the harness released for local runs.</p></div>
-<div class="road"><div class="phase">Phase 02</div><h4>Submission channel</h4><p>An entry format and a review path, so results arrive versioned and attributable.</p></div>
-<div class="road"><div class="phase">Phase 03</div><h4>Held-out scoring</h4><p>Rotating held-out papers scored on our side; the frontier updates from verified runs only.</p></div>
-<div class="road"><div class="phase">Phase 04</div><h4>Open frontier</h4><p>Standing leaderboard with reproducible traces and artefacts for every entry.</p></div>
-</div>
-</section>
-
-<section id="propose" class="platform">
-<div class="section-head"><div><h2>Propose a paper for this challenge.</h2><p>The benchmark is only as good as the papers in it. If you know a quantum-computing result whose numbers can be recovered from the text alone, it can enter the pool &mdash; you supply the paper and what a correct reproduction has to hit, and we supply the harness, the sandbox and the rotation.</p></div></div>
-<div class="setup">
-  <div class="steps">
-    <div class="stepr"><div class="n">01</div><div><h4>Nominate the paper</h4><p>It has to be reproducible in principle from the paper itself: no private data, no hardware nobody else can book, no step that exists only in a lab notebook.</p></div></div>
-    <div class="stepr"><div class="n">02</div><div><h4>Declare the targets</h4><p>Name the quantities a reproduction must recover &mdash; a figure, a table entry, a threshold &mdash; and the tolerance each must land inside. This is what makes the paper scorable without a human in the loop.</p></div></div>
-    <div class="stepr"><div class="n">03</div><div><h4>Review and rotation</h4><p>Accepted papers join the pool. Some are published, some go to the held-out split, and which is which is not disclosed &mdash; including to whoever proposed it.</p></div></div>
-  </div>
-  <div class="codebox"><span class="c"># planned paper spec</span><br>
-paper:<br>
-&nbsp;&nbsp;arxiv: <span class="a">"2503.01234"</span><br>
-&nbsp;&nbsp;targets:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- name: <span class="a">"fidelity_vs_depth"</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source: <span class="a">"Fig. 3a"</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tolerance: 0.02<br>
-&nbsp;&nbsp;&nbsp;&nbsp;- name: <span class="a">"threshold"</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source: <span class="a">"Table II"</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tolerance: 0.005<br>
-&nbsp;&nbsp;budget: <span class="a">"standard"</span><br>
-&nbsp;&nbsp;<span class="c"># anything the harness must provide</span><br>
-&nbsp;&nbsp;requires: [<span class="a">"stabiliser-sim"</span>]
-</div>
-</div>
-<p style="font-size:13px;line-height:1.65;color:var(--muted);margin:34px 0 0;max-width:70ch">Until the submission channel opens, proposals go to <a href="mailto:yuxuan.du@ntu.edu.sg?subject=OmniQC%20paper%20proposal" style="color:var(--accent-ink);border-bottom:1px solid rgba(var(--accent-rgb),.35)">yuxuan.du@ntu.edu.sg</a>.</p>
-</section>
-
-<section id="ra4" class="platform">
-<div class="section-head"><div><h2>RA4, the first entry on the board.</h2><p>RA4 is our own AI scientist and the reason the challenge exists: it reads a quantum paper, reconstructs the experimental plan, implements the method, executes it, diagnoses mismatches, and iterates toward a reproducible result. It is on the frontier so that there is something concrete to beat.</p></div></div>
-<div class="console">
-<div class="sidebar">
-<h3>Reproduction task</h3>
-<div class="field"><label>Paper</label><div class="input"><span>arXiv URL or PDF</span><span>＋</span></div></div>
-<div class="field"><label>Target</label><div class="input"><span>End-to-end reproduction</span><span>⌄</span></div></div>
-<div class="field"><label>Compute budget</label><div class="input"><span>Standard</span><span>⌄</span></div></div>
-<div class="field"><label>Environment</label><div class="input"><span>Auto-detect</span><span>⌄</span></div></div>
-<div class="runbtn">RUN RA4</div>
-</div>
-<div class="workspace">
-<div class="bar"><span>RA4 trajectory</span><span>Example run</span></div>
-<div class="pipeline">
-<div class="task"><div class="tick">✓</div><div><b>Paper understanding</b><small>method, assumptions, datasets, metrics extracted</small></div><div class="state">Done</div></div>
-<div class="task"><div class="tick">✓</div><div><b>Implementation plan</b><small>dependencies and experiment graph constructed</small></div><div class="state">Done</div></div>
-<div class="task"><div class="tick">✓</div><div><b>Code generation</b><small>repository structure and scripts produced</small></div><div class="state">Done</div></div>
-<div class="task"><div class="tick">↻</div><div><b>Execution &amp; diagnosis</b><small>numerical mismatch detected; repair loop active</small></div><div class="state">Running</div></div>
-<div class="task"><div class="tick">·</div><div><b>Reproduction report</b><small>plots, metrics, limitations, and artifacts</small></div><div class="state">Pending</div></div>
-</div>
-</div>
-</div>
-<h3 class="subhead">Every scientist should be usable, not just readable.</h3>
-<p style="font-size:14px;line-height:1.65;color:var(--muted);max-width:74ch;margin:0 0 26px">Reserved for downloadable agent packages, backbone information, checkpoints, the benchmark harness, and reproducible traces as they are released.</p>
-<div class="codebox"><span class="c"># planned usage</span><br>
-from omniqc import RA4<br><br>
-scientist = RA4.load(<span class="a">"ra4"</span>)<br>
-run = scientist.reproduce(<span class="a">"paper.pdf"</span>)<br>
-run.report()<br>
-run.export(<span class="a">"./artifacts"</span>)
-</div>
-</section>
-
-
-
-<footer><span>OMNI · OmniQC · Paper Reproduction</span><span class="lab"><img class="ntu" src="assets/ntu-logo.svg" alt="Nanyang Technological University" onerror="this.remove()">NTU QID Lab · Quantum Intelligence Discovery Lab</span></footer>
-</div>
-
-<script>
-/* ============================================================
-   OmniQC frontier — single source of truth.
-   Replace SYSTEMS with real results; chart, leaderboard and the
-   hero status panel all derive from it. Frontier membership is
-   COMPUTED (Pareto-optimal on score↑ / cost↓), never hand-set.
-   ============================================================ */
-const SYSTEMS = [
-  { name:"RA4",              score:82.4, cost:3.10,  exec:91.0, papers:120, ours:true  },
-  { name:"RA4 · lite",       score:71.2, cost:0.95,  exec:84.0, papers:120, ours:true  },
-  { name:"Baseline agent A", score:68.5, cost:6.40,  exec:79.0, papers:120 },
-  { name:"Baseline agent B", score:74.1, cost:18.20, exec:83.0, papers:120 },
-  { name:"Baseline agent C", score:52.0, cost:1.80,  exec:64.0, papers:120 },
-  { name:"Single-shot LLM",  score:23.6, cost:0.20,  exec:38.0, papers:120 },
-];
-
-/* ---- Pareto frontier: maximise score, minimise cost ---- */
-function frontierOf(rows){
-  return rows.map(r => !rows.some(o =>
-      o !== r && o.score >= r.score && o.cost <= r.cost &&
-      (o.score > r.score || o.cost < r.cost)));
-}
-const ON = frontierOf(SYSTEMS);
-SYSTEMS.forEach((s,i) => s.front = ON[i]);
-
-
-/* ---- record history for Fig. 1 and the latest-entry card ---- */
-const PROGRESS = [
-  { date:"2026-03-04", score:23.6, who:"Single-shot LLM",  model:"baseline" },
-  { date:"2026-03-12", score:19.4, who:"Single-shot LLM",  model:"open-weights 70B" },
-  { date:"2026-03-21", score:41.8, who:"Baseline agent C", model:"open-weights 70B" },
-  { date:"2026-03-30", score:35.2, who:"Baseline agent C", model:"open-weights 70B" },
-  { date:"2026-04-09", score:52.0, who:"Baseline agent C", model:"open-weights 70B" },
-  { date:"2026-04-18", score:44.7, who:"Baseline agent A", model:"frontier LLM" },
-  { date:"2026-04-27", score:48.3, who:"Baseline agent A", model:"frontier LLM" },
-  { date:"2026-05-06", score:51.1, who:"Baseline agent B", model:"frontier LLM" },
-  { date:"2026-05-15", score:68.5, who:"Baseline agent A", model:"frontier LLM" },
-  { date:"2026-05-24", score:63.9, who:"RA4 · lite",       model:"frontier LLM" },
-  { date:"2026-06-02", score:71.2, who:"RA4 · lite",       model:"frontier LLM" },
-  { date:"2026-06-13", score:66.4, who:"Baseline agent B", model:"frontier LLM" },
-  { date:"2026-06-24", score:74.1, who:"Baseline agent B", model:"frontier LLM" },
-  { date:"2026-07-05", score:70.8, who:"RA4",              model:"frontier LLM" },
-  { date:"2026-07-19", score:79.0, who:"RA4",              model:"frontier LLM" },
-  { date:"2026-08-04", score:76.5, who:"Baseline agent A", model:"frontier LLM" },
-  { date:"2026-08-15", score:81.0, who:"RA4",              model:"frontier LLM" },
-  { date:"2026-08-26", score:82.4, who:"RA4",              model:"frontier LLM" },
-];
-
-const fmt1 = v => v.toFixed(1);
-const shortDate = iso => new Date(iso+"T00:00:00Z")
-  .toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"UTC"});
-
-let run = -Infinity;
-PROGRESS.forEach(p => { p.record = p.score > run; if (p.record) run = p.score; });
-const RECORDS = PROGRESS.filter(p => p.record);
-const BEST = RECORDS[RECORDS.length-1];
-const PREV = RECORDS[RECORDS.length-2];
-
-const fmtCost  = c => "$" + (c < 1 ? c.toFixed(2) : c.toFixed(2));
-const fmtScore = s => s.toFixed(1) + "%";
-
-/* ---- hero status: best scorer on the frontier ---- */
-(function(){
-  const best = SYSTEMS.filter(s => s.front).reduce((a,b) => b.score > a.score ? b : a);
-  document.getElementById("sbWho").textContent   = best.name;
-  document.getElementById("sbScore").textContent = fmtScore(best.score);
-  document.getElementById("sbCost").textContent  = fmtCost(best.cost);
-})();
-
-/* ---- chart ---- */
-(function(){
-  const NS = "http://www.w3.org/2000/svg";
-  const svg = document.getElementById("plot");
-  const tip = document.getElementById("tip");
-  const W = 960, H = 520, M = { t:26, r:150, b:62, l:66 };
-  const iw = W - M.l - M.r, ih = H - M.t - M.b;
-
-  const COST_TICKS = [0.1, 0.3, 1, 3, 10, 30];
-  const lo = Math.log10(0.1), hi = Math.log10(50);
-  const X = c => M.l + (Math.log10(c) - lo) / (hi - lo) * iw;
-  const Y = s => M.t + (1 - s / 100) * ih;
-
-  const el = (n, a = {}) => { const e = document.createElementNS(NS, n);
-    for (const k in a) e.setAttribute(k, a[k]); return e; };
-
-  const t1 = el("title"); t1.id = "plotTitle";
-  t1.textContent = "Reproduction score against cost per paper";
-  const d1 = el("desc"); d1.id = "plotDesc";
-  d1.textContent = "Scatter plot. Higher and further left is better. "
-    + SYSTEMS.filter(s=>s.front).length + " of " + SYSTEMS.length
-    + " systems lie on the Pareto frontier. Full values are in the leaderboard table below.";
-  svg.append(t1, d1);
-
-  /* gridlines + axes */
-  [0,25,50,75,100].forEach(v => {
-    svg.append(el("line",{class:"grid",x1:M.l,x2:M.l+iw,y1:Y(v),y2:Y(v)}));
-    const tx = el("text",{x:M.l-14,y:Y(v)+4,"text-anchor":"end"});
-    tx.textContent = v + "%"; svg.append(tx);
-  });
-  COST_TICKS.forEach(c => {
-    svg.append(el("line",{class:"grid",y1:M.t,y2:M.t+ih,x1:X(c),x2:X(c)}));
-    const tx = el("text",{x:X(c),y:M.t+ih+24,"text-anchor":"middle"});
-    tx.textContent = c < 1 ? "$" + c : "$" + c; svg.append(tx);
-  });
-  const ax = el("text",{class:"axttl",x:M.l+iw/2,y:M.t+ih+52,"text-anchor":"middle"});
-  ax.textContent = "Cost per paper (log scale)"; svg.append(ax);
-  const ay = el("text",{class:"axttl",x:-(M.t+ih/2),y:18,"text-anchor":"middle",transform:"rotate(-90)"});
-  ay.textContent = "Reproduction score"; svg.append(ay);
-
-  /* "better" direction cue */
-  const bx = M.l + 66, by = M.t + 12;      /* elbow sits right of the y-axis */
-  svg.append(el("path",{class:"front","stroke-opacity":.45,
-    d:`M ${bx} ${by+26} L ${bx-46} ${by+26} M ${bx} ${by+26} L ${bx} ${by}`}));
-  svg.append(el("path",{class:"front","stroke-opacity":.45,d:`M ${bx-6} ${by+6} L ${bx} ${by} L ${bx+6} ${by+6}`}));
-  svg.append(el("path",{class:"front","stroke-opacity":.45,d:`M ${bx-40} ${by+20} L ${bx-46} ${by+26} L ${bx-40} ${by+32}`}));
-  const bt = el("text",{class:"better",x:bx+12,y:by+30}); bt.textContent = "BETTER";
-  svg.append(bt);
-
-  /* frontier staircase: up-and-left through the Pareto set */
-  const fr = SYSTEMS.filter(s => s.front).sort((a,b) => a.cost - b.cost);
-  if (fr.length > 1) {
-    let d = `M ${X(fr[0].cost)} ${Y(fr[0].score)}`;
-    for (let i = 1; i < fr.length; i++)
-      d += ` L ${X(fr[i].cost)} ${Y(fr[i-1].score)} L ${X(fr[i].cost)} ${Y(fr[i].score)}`;
-    svg.append(el("path",{class:"front",d,"stroke-opacity":.85}));
-  }
-
-  /* marks — emphasis: accent on the frontier, de-emphasis gray for dominated */
-  const groups = [];
-  SYSTEMS.forEach((s, i) => {
-    const g = el("g"), cx = X(s.cost), cy = Y(s.score);
-    const r = s.ours ? 8 : 6;
-    const hit = el("circle",{class:"hit",cx,cy,r:16,tabindex:"0",role:"button",
-      "aria-label":`${s.name}: ${fmtScore(s.score)} reproduction score at ${fmtCost(s.cost)} per paper`});
-    const mk = el("circle",{class:"mk",cx,cy,r,
-      fill: s.front ? "var(--accent)" : "var(--dim)",
-      stroke:"var(--card)","stroke-width":2});          /* 2px surface ring */
-    if (s.ours) { mk.setAttribute("stroke","var(--ink)"); mk.setAttribute("stroke-width","2"); }
-    /* the staircase runs right/up out of every frontier point, so a label
-       placed to its right would be struck through by the line — put those above. */
-    const lab = s.front
-      ? el("text",{class:"ptlab", x: cx - 2, y: cy - r - 12})
-      : el("text",{class:"ptlab dimlab", x: cx + r + 10, y: cy + 4});
-    lab.textContent = s.name;                        /* identity via text token, not hue */
-    g.append(hit, mk, lab);
-    svg.append(g);
-    groups.push({ g, s, cx, cy });
-  });
-
-  /* hover / focus tooltip — values lead, label follows */
-  function show(o){
-    groups.forEach(x => x.g.classList.toggle("on", x === o));
-    tip.replaceChildren();
-    const nm = document.createElement("div"); nm.className = "nm";
-    const key = document.createElement("i");
-    key.style.background = o.s.front ? "var(--accent)" : "var(--dim)";
-    const nt = document.createElement("span");
-    nt.textContent = o.s.name + (o.s.front ? " · on frontier" : " · dominated");
-    nm.append(key, nt);
-    const dl = document.createElement("dl");
-    [["Score", fmtScore(o.s.score)],
-     ["Cost / paper", fmtCost(o.s.cost)],
-     ["Execution rate", o.s.exec.toFixed(1) + "%"],
-     ["Papers", String(o.s.papers)]].forEach(([k,v]) => {
-      const dt = document.createElement("dt"); dt.textContent = k;
-      const dd = document.createElement("dd"); dd.textContent = v;
-      dl.append(dt, dd);
-    });
-    tip.append(nm, dl);
-    tip.classList.add("on");
-    const box = svg.getBoundingClientRect();
-    const px = box.left + (o.cx / W) * box.width;
-    const py = box.top  + (o.cy / H) * box.height;
-    const wrap = tip.offsetParent.getBoundingClientRect();
-    const rightish = (o.cx / W) > 0.55;
-    let L = rightish ? px - wrap.left - tip.offsetWidth - 20 : px - wrap.left + 20;
-    let T = py - wrap.top - tip.offsetHeight / 2;
-    L = Math.max(8, Math.min(L, wrap.width - tip.offsetWidth - 8));
-    T = Math.max(8, Math.min(T, wrap.height - tip.offsetHeight - 8));
-    tip.style.left = L + "px"; tip.style.top = T + "px";
-    document.querySelectorAll("#lb .tr").forEach(r =>
-      r.classList.toggle("lit", r.dataset.name === o.s.name));
-  }
-  function hide(){
-    groups.forEach(x => x.g.classList.remove("on"));
-    tip.classList.remove("on");
-    document.querySelectorAll("#lb .tr.lit").forEach(r => r.classList.remove("lit"));
-  }
-  groups.forEach(o => {
-    const h = o.g.querySelector(".hit");
-    h.addEventListener("pointerenter", () => show(o));
-    h.addEventListener("focus", () => show(o));
-    h.addEventListener("blur", hide);
-  });
-  svg.addEventListener("pointerleave", hide);
-})();
-
-/* ---- leaderboard table (also the chart's accessible table view) ---- */
-(function(){
-  const host = document.getElementById("lb");
-  const COLS = [
-    { k:"rank",  t:"#",              sort:null },
-    { k:"name",  t:"System",         sort:"name"  },
-    { k:"score", t:"Reproduction",   sort:"score" },
-    { k:"cost",  t:"Cost / paper",   sort:"cost"  },
-    { k:"exec",  t:"Execution",      sort:"exec"  },
-    { k:"papers",t:"Papers",         sort:"papers"},
-    { k:"stat",  t:"Frontier",       sort:"front" },
-  ];
-  let key = "score", dir = -1;
-
-  function render(){
-    host.replaceChildren();
-    const head = document.createElement("div");
-    head.className = "tr head";
-    COLS.forEach(c => {
-      const cell = document.createElement("div");
-      if (!c.sort) { cell.textContent = c.t; head.append(cell); return; }
-      const b = document.createElement("button");
-      b.className = "sortbtn"; b.type = "button";
-      b.setAttribute("aria-sort", key === c.sort ? (dir < 0 ? "descending" : "ascending") : "none");
-      const lbl = document.createElement("span"); lbl.textContent = c.t;
-      const car = document.createElement("span"); car.className = "car";
-      car.textContent = dir < 0 ? "▼" : "▲";
-      b.append(lbl, car);
-      b.addEventListener("click", () => {
-        if (key === c.sort) dir = -dir; else { key = c.sort; dir = (c.sort === "name") ? 1 : -1; }
-        render();
-      });
-      cell.append(b); head.append(cell);
-    });
-    host.append(head);
-
-    const rows = SYSTEMS.slice().sort((a,b) => {
-      const va = a[key], vb = b[key];
-      if (typeof va === "string") return va.localeCompare(vb) * dir;
-      return ((va === true ? 1 : va === false ? 0 : va) -
-              (vb === true ? 1 : vb === false ? 0 : vb)) * dir;
-    });
-
-    rows.forEach((s, i) => {
-      const tr = document.createElement("div");
-      tr.className = "tr"; tr.dataset.name = s.name;
-      const cells = [];
-
-      const c0 = document.createElement("div"); c0.className = "rank";
-      c0.textContent = String(i + 1); cells.push(c0);
-
-      const c1 = document.createElement("div"); c1.className = "who";
-      const dot = document.createElement("span"); dot.className = "dot";
-      dot.style.background = s.front ? "var(--accent)" : "var(--dim)";
-      const nm = document.createElement("span"); nm.textContent = s.name;
-      c1.append(dot, nm);
-      if (s.ours) { const tg = document.createElement("span"); tg.className = "tagme";
-        tg.textContent = "ours"; c1.append(tg); }
-      cells.push(c1);
-
-      [fmtScore(s.score), fmtCost(s.cost), s.exec.toFixed(1) + "%", String(s.papers)]
-        .forEach(v => { const d = document.createElement("div");
-          d.className = "num"; d.textContent = v; cells.push(d); });
-
-      const c6 = document.createElement("div");
-      c6.className = s.front ? "rank" : "";
-      c6.textContent = s.front ? "On frontier" : "Dominated";
-      if (!s.front) c6.style.color = "var(--muted)";
-      cells.push(c6);
-
-      cells.forEach(c => tr.append(c));
-      host.append(tr);
-    });
-  }
-  render();
-})();
-
-/* ---- latest verified entry detail ---- */
-(function(){
-  const set=(id,v)=>document.getElementById(id).textContent=v;
-  set("dImp", "+"+fmt1(BEST.score-PREV.score)+" pts");
-  set("dWho", BEST.who);
-  set("dWhen", shortDate(BEST.date)+" · verified");
-  set("dScore", fmt1(BEST.score)+"%");
-  set("dPrev", fmt1(PREV.score)+"% ("+PREV.who+")");
-  set("dModel", BEST.model);
-  set("dStatus", "Accepted — new record");
-})();
-
-/* ---- Fig. 1 ---- */
-(function(){
-  const NS="http://www.w3.org/2000/svg";
-  const svg=document.getElementById("prog"), tip=document.getElementById("tip2");
-  const W=880,H=360,M={t:24,r:34,b:54,l:58};
-  const iw=W-M.l-M.r, ih=H-M.t-M.b;
-  const el=(n,a={})=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
-  const ts=p=>new Date(p.date+"T00:00:00Z").getTime();
-  const t0=ts(PROGRESS[0]), t1=ts(PROGRESS[PROGRESS.length-1]), pad=(t1-t0)*.06;
-  const X=t=>M.l+(t-(t0-pad))/((t1+pad)-(t0-pad))*iw;
-  const Y=s=>M.t+(1-s/100)*ih;
-
-  const ttl=el("title"); ttl.id="progT"; ttl.textContent="Record reproduction score over time";
-  const dsc=el("desc"); dsc.id="progD";
-  dsc.textContent="Line chart. The record rose from "+fmt1(PROGRESS[0].score)+"% to "+fmt1(BEST.score)
-    +"% across "+RECORDS.length+" records. All values are listed in the leaderboard table below.";
-  svg.append(ttl,dsc);
-
-  [0,25,50,75,100].forEach(v=>{
-    svg.append(el("line",{class:"grid",x1:M.l,x2:M.l+iw,y1:Y(v),y2:Y(v)}));
-    const t=el("text",{x:M.l-13,y:Y(v)+4,"text-anchor":"end"}); t.textContent=v+"%"; svg.append(t);
-  });
-  const every=Math.ceil(RECORDS.length/6);
-  RECORDS.forEach((p,i)=>{
-    if(i%every!==0 && i!==RECORDS.length-1) return;
-    const t=el("text",{x:X(ts(p)),y:M.t+ih+24,"text-anchor": i===0?"start":"middle"});
-    t.textContent=shortDate(p.date); svg.append(t);
-  });
-  const ax=el("text",{class:"axttl",x:M.l+iw/2,y:M.t+ih+46,"text-anchor":"middle"});
-  ax.textContent="Verified entries, 2026"; svg.append(ax);
-  const ay=el("text",{class:"axttl",x:-(M.t+ih/2),y:16,"text-anchor":"middle",transform:"rotate(-90)"});
-  ay.textContent="Reproduction score"; svg.append(ay);
-
-  let d=`M ${X(ts(RECORDS[0]))} ${Y(RECORDS[0].score)}`;
-  for(let i=1;i<RECORDS.length;i++)
-    d+=` L ${X(ts(RECORDS[i]))} ${Y(RECORDS[i-1].score)} L ${X(ts(RECORDS[i]))} ${Y(RECORDS[i].score)}`;
-  d+=` L ${M.l+iw} ${Y(BEST.score)}`;
-  svg.append(el("path",{class:"rec",d}));
-
-  const groups=[];
-  PROGRESS.forEach(p=>{
-    const g=el("g"), cx=X(ts(p)), cy=Y(p.score);
-    const hit=el("circle",{class:"hit",cx,cy,r:15,tabindex:"0",role:"button",
-      "aria-label":`${p.who} on ${shortDate(p.date)}: ${fmt1(p.score)} percent`
-        +(p.record?", a new record":", did not beat the record")});
-    const mk=el("circle",{class:"mk",cx,cy,r:p.record?6:4.5,
-      fill:p.record?"var(--accent)":"var(--dim)",stroke:"var(--card)","stroke-width":2});
-    g.append(hit,mk); svg.append(g); groups.push({g,p,cx,cy});
-  });
-  const lb=el("text",{class:"lbl",x:X(ts(BEST))-10,y:Y(BEST.score)-16,"text-anchor":"end"});
-  lb.textContent=BEST.who+" · "+fmt1(BEST.score)+"%"; svg.append(lb);
-
-  function show(o){
-    groups.forEach(x=>x.g.classList.toggle("on",x===o));
-    tip.replaceChildren();
-    const nm=document.createElement("div"); nm.className="nm";
-    const i=document.createElement("i");
-    i.style.background=o.p.record?"var(--accent)":"var(--dim)";
-    const s=document.createElement("span");
-    s.textContent=o.p.who+(o.p.record?" · new record":" · no record");
-    nm.append(i,s);
-    const dl=document.createElement("dl");
-    [["Score",fmt1(o.p.score)+"%"],["Date",shortDate(o.p.date)],["Backbone",o.p.model]]
-      .forEach(([k,v])=>{const dt=document.createElement("dt");dt.textContent=k;
-        const dd=document.createElement("dd");dd.textContent=v;dl.append(dt,dd);});
-    tip.append(nm,dl); tip.classList.add("on");
-    const box=svg.getBoundingClientRect();
-    const px=box.left+(o.cx/W)*box.width, py=box.top+(o.cy/H)*box.height;
-    const wrap=tip.offsetParent.getBoundingClientRect();
-    const right=(o.cx/W)>.55;
-    let L=right?px-wrap.left-tip.offsetWidth-18:px-wrap.left+18;
-    let T=py-wrap.top-tip.offsetHeight/2;
-    L=Math.max(6,Math.min(L,wrap.width-tip.offsetWidth-6));
-    T=Math.max(6,Math.min(T,wrap.height-tip.offsetHeight-6));
-    tip.style.left=L+"px"; tip.style.top=T+"px";
-  }
-  function hide(){groups.forEach(x=>x.g.classList.remove("on"));tip.classList.remove("on");}
-  groups.forEach(o=>{const h=o.g.querySelector(".hit");
-    h.addEventListener("pointerenter",()=>show(o));
-    h.addEventListener("focus",()=>show(o));
-    h.addEventListener("blur",hide);});
-  svg.addEventListener("pointerleave",hide);
-})();
-</script>
 <script src="assets/omni.js"></script>
 </body></html>

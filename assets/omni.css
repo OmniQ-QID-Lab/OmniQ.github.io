@@ -212,6 +212,94 @@ svg.plot .better{fill:var(--accent);opacity:.6;font-family:var(--mono);font-size
 .note a{color:var(--accent-ink);border-bottom:1px solid rgba(var(--accent-rgb),.35)}
 .figcap{font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 26px 16px}
 
+/* ---------- motifs ----------
+   Small animated SVG schematics (OmniQC challenges, OmniQST papers). Deliberately
+   unlabelled: no axes, ticks or numbers, so a motif is never mistaken for a
+   result. Pages size and frame the .viz box; the primitives live here. */
+.viz .hair{stroke:var(--hair);stroke-width:1}
+.viz .dim{fill:var(--dim)}
+.viz .acc{fill:var(--accent)}
+.viz .line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.viz .flip-b{opacity:.14}
+.viz .wire{fill:none;stroke:var(--hair);stroke-width:1.5}
+.viz .edge{fill:none;stroke:var(--hair);stroke-width:1.25}
+.viz .band{fill:var(--accent);opacity:.10}
+
+/* Animation runs only while the card is on screen, and the un-animated state
+   is the meaningful one — so prefers-reduced-motion (handled globally
+   further down this file) leaves a readable still image rather than a blank box. */
+.viz.run .draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);
+  animation:vdraw 4.4s ease-in-out infinite}
+.viz.run .pulse{animation:vpulse 4.4s ease-in-out infinite}
+.viz.run .sweep{animation:vsweep 5s cubic-bezier(.5,0,.5,1) infinite}
+.viz.run .drop{animation:vdrop 5s cubic-bezier(.5,0,.5,1) infinite}
+.viz.run .flip-a{animation:vflipA 4.6s ease-in-out infinite}
+.viz.run .flip-b{animation:vflipB 4.6s ease-in-out infinite}
+.viz.run .breathe{animation:vbreathe 5.2s ease-in-out infinite}
+@keyframes vdraw{0%{stroke-dashoffset:var(--len)}45%,100%{stroke-dashoffset:0}}
+@keyframes vpulse{0%,42%{opacity:0;r:2}58%{opacity:1;r:4.6}72%,100%{opacity:1;r:3.6}}
+@keyframes vsweep{0%{transform:translateX(0)}70%,100%{transform:translateX(186px)}}
+@keyframes vdrop{0%,32%{opacity:1}56%,100%{opacity:.16}}
+@keyframes vflipA{0%,44%{opacity:1}56%,100%{opacity:.14}}
+@keyframes vflipB{0%,44%{opacity:.14}56%,100%{opacity:1}}
+@keyframes vbreathe{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.34)}}
+
+/* With reduced motion the animation is killed globally (omni.css), but the
+   dash offset that the draw animation consumes would survive and leave the
+   frontier line invisible. Restore the finished state instead. */
+@media(prefers-reduced-motion:reduce){
+  .viz .draw{stroke-dasharray:none!important;stroke-dashoffset:0!important}
+  .viz .flip-b{opacity:.14}
+}
+
+/* ---------- paper panels (.pp) ----------
+   A tab panel that presents published work: a head (label, name, full title,
+   authors, motif), then background prose beside a column of facts and links.
+   Shared by OmniQST and OmniQEC. Everything sits on the paper — no cards. */
+.pp .k{font:10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+.pp .go{display:inline-block;margin-top:24px;font:11px var(--mono);letter-spacing:.08em;color:var(--accent-ink);
+  border-bottom:1px solid rgba(var(--accent-rgb),.35)}
+.pp .paperhead{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:48px;align-items:end}
+.pp .paperhead .k{margin-bottom:18px}
+.pp .paperhead h2{margin:0}
+.pp .paperhead .sub{font:500 clamp(18px,1.6vw,22px)/1.35 var(--display);letter-spacing:-.012em;color:var(--ink);margin:14px 0 0;max-width:46ch}
+.pp .paperhead .by{font-size:13px;line-height:1.6;color:var(--muted);margin:12px 0 0;max-width:80ch}
+.pp .paper{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,300px);gap:64px;align-items:start;
+  border-top:1px solid var(--hair);padding-top:40px}
+.pp .paper :is(h3,h4){font:10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 16px;font-weight:400}
+.pp .paper p{font-size:15px;line-height:1.7;color:var(--muted);margin:0 0 18px;max-width:64ch}
+.pp .paper p b{color:var(--ink);font-weight:600}
+.pp .links{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:30px}
+.pp .links .go{margin-top:0}
+.pp .facts{margin:0}
+.pp .facts div{padding:18px 0;border-bottom:1px solid var(--hair)}
+.pp .facts div:first-child{padding-top:0}
+.pp .facts dt{font:10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.pp .facts dd{margin:10px 0 0;font:600 34px/1 var(--display);letter-spacing:-.03em}
+.pp .facts dd.t{font:600 19px/1.3 var(--display);letter-spacing:-.01em}
+.pp .facts dd.n{margin-top:7px;font:400 13px/1.5 var(--sans);letter-spacing:0;color:var(--muted)}
+/* a component panel can list several works, each with its own head */
+.pp .work{margin-top:72px}
+.pp .workhead{margin-bottom:28px}
+.pp .workhead .k{margin-bottom:14px}
+.pp .workhead h3{font-family:var(--display);font-size:clamp(28px,2.6vw,38px);font-weight:600;line-height:1.1;letter-spacing:-.028em;margin:0}
+.pp .workhead .sub{font:500 clamp(17px,1.4vw,20px)/1.35 var(--display);letter-spacing:-.01em;color:var(--ink);margin:12px 0 0;max-width:52ch}
+.pp .workhead .by{font-size:13px;line-height:1.6;color:var(--muted);margin:10px 0 0;max-width:80ch}
+/* the motif box beside a paper head, tinted with the page accent; each page
+   choreographs its own motifs */
+.qviz{width:100%;height:auto;border-radius:3px;background:rgba(var(--accent-rgb),.035);
+  border:1px solid rgba(var(--accent-rgb),.14)}
+.qviz .doc{fill:none;stroke:var(--dim);stroke-width:1.25}
+.qviz .code line{stroke:var(--dim);stroke-width:1.5;stroke-linecap:round}
+.qviz .feed{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:3 3;opacity:.7}
+.qviz .ring{fill:none;stroke:var(--accent);stroke-width:1.5}
+.qviz .qring,.qviz .qpop{transform-box:fill-box;transform-origin:center}
+@media(max-width:860px){
+  .pp .paperhead{grid-template-columns:1fr;gap:28px}
+  .pp .paper{grid-template-columns:1fr;gap:36px}
+  .qviz{max-width:440px}
+}
+
 /* ---------- status panel ---------- */
 .statusbox{width:min(100%,440px);border:1px solid var(--hair);border-radius:4px;
   background:var(--card);padding:24px;box-shadow:var(--shadow)}
@@ -229,6 +317,8 @@ footer{height:88px;border-top:1px solid var(--hair);display:flex;align-items:cen
   text-transform:uppercase;letter-spacing:.1em}
 .lab{display:inline-flex;align-items:center;gap:11px}
 .ntu{height:20px;width:auto;opacity:.95;flex:none}
+.qid{height:24px;width:24px;flex:none}   /* QID Lab mark, assets/qid-lab-mark.png */
+a.lab:hover{color:var(--ink)}
 
 /* ---------- responsive ---------- */
 /* an 8-tab bar at full size just overflows 1024px — tighten rather than scroll */

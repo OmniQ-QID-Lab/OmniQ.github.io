@@ -24,7 +24,7 @@ They are complementary rather than separate: discovery needs reproducible result
 
 ## Who runs this
 
-**QID Lab** (Quantum Intelligence Discovery Lab) at NTU, led by **Yuxuan Du**, Assistant Professor. The lab works across quantum intelligence, autonomous scientific discovery, quantum error correction and trustworthy quantum software — postdocs, PhD and research students. The full team is on the [People page](https://omni-qid.github.io/people.html).
+**QID Lab** (Quantum Intelligence & Discovery Lab) at NTU, led by **Yuxuan Du**, Assistant Professor. The lab works across quantum intelligence, autonomous scientific discovery, quantum error correction and trustworthy quantum software — postdocs, PhD and research students. The full team is on the [People page](https://omni-qid.github.io/people.html).
 
 Our own systems compete on OmniQC under the same rules as everyone else's. That is the point: a benchmark its authors are exempt from is not a benchmark.
 

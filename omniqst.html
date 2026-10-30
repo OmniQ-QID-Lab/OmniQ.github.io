@@ -3,14 +3,48 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/omni.css">
-<title>OmniQST — Trustworthy Quantum Software</title><meta name="theme-color" content="#eeece7"><style>
+<title>OmniQST — Trustworthy Quantum Software</title><meta name="description" content="OmniQST builds AI agents for autonomous quantum software engineering. Its first paper, KQFuzz, received an ACM SIGSOFT Distinguished Paper Award at ASE 2026."><meta name="theme-color" content="#eeece7"><style>
 /* omniqst.html — page-unique only; the system lives in assets/omni.css */
-.scheme{position:relative}
+/* One panel per paper; the tab bar is the index. Paper-panel layout (.pp) and the
+   motif box (.qviz) are shared in omni.css; this page keeps the award highlight
+   and the choreography of its two motifs. */
+
+/* overview: award highlight */
+.award{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:64px;align-items:center;
+  border-top:1px solid var(--hair);padding-top:48px}
+.award h3{font-family:var(--display);font-size:clamp(26px,2.4vw,34px);font-weight:600;line-height:1.15;
+  letter-spacing:-.025em;margin:18px 0 16px;max-width:26ch}
+.award p{font-size:14.5px;line-height:1.65;color:var(--muted);max-width:58ch;margin:0}
+.award figure{margin:0}
+.award img{display:block;width:100%;height:auto;border-radius:3px;
+  box-shadow:0 1px 2px rgba(20,22,26,.06),0 14px 34px rgba(20,22,26,.12)}
+
+/* KQFuzz and QuSema motifs */
+.qviz .pruned{opacity:.18}
+.qviz .expect rect{fill:none;stroke:var(--accent);stroke-width:1.25;stroke-dasharray:3 2.5}
+.qviz .bars{opacity:.5}   /* returned values sit back; the flagged one comes forward */
+.qviz .qbad{fill:rgba(var(--accent-rgb),.32);stroke:var(--accent);stroke-width:1.5}
+.qviz .qsweep{opacity:0}
+.qviz .qsweep line{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:3 4}
+.viz.run .pruned{animation:qprune 4.4s ease-in-out infinite}
+.viz.run .qring{animation:qring 4.4s ease-out infinite}
+.viz.run .qsweep{animation:qsweep 5s linear infinite}
+.viz.run .qbad{animation:qbad 5s linear infinite}
+.viz.run .qpop{animation:qpop 5s ease-out infinite}
+@keyframes qprune{0%,28%{opacity:.9}55%,100%{opacity:.18}}
+@keyframes qring{0%,44%{opacity:0;transform:scale(.3)}58%{opacity:1;transform:scale(1.15)}70%,100%{opacity:1;transform:scale(1)}}
+@keyframes qsweep{0%{opacity:0;transform:translateX(0)}6%,74%{opacity:.85}80%,100%{opacity:0;transform:translateX(262px)}}
+@keyframes qbad{0%,47%{fill:rgba(127,138,153,.5);stroke:transparent}53%,100%{fill:rgba(var(--accent-rgb),.32);stroke:var(--accent)}}
+@keyframes qpop{0%,47%{opacity:0;transform:scale(.3)}56%{opacity:1;transform:scale(1.15)}66%,100%{opacity:1;transform:scale(1)}}
+@media(max-width:860px){
+  .award{grid-template-columns:1fr;gap:36px}
+  .award figure{max-width:400px}
+}
 </style></head>
 <body class="p-qst"><div class="noise"></div><div class="shell">
 <nav>
 <a class="brand" href="index.html">OMNI</a>
-<div class="navlinks"><a href="omniqc.html">OmniQC</a><a href="omniqec.html">OmniQEC</a><a class="active" href="omniqst.html">OmniQST</a><a href="people.html">People</a></div>
+<div class="navlinks"><a href="omniqc.html">OmniQC</a><a href="omniqec.html">OmniQEC</a><a class="active" href="omniqst.html">OmniQST</a><a href="people.html">About us</a></div>
 </nav>
 
 <section class="hero">
@@ -18,38 +52,102 @@
 <h1>OmniQST<br><span class="ghost">test the stack.</span></h1>
 <p><b>OmniQST</b> is the software-trust channel of OMNI: autonomous testing, verification, and diagnosis for quantum libraries, compilers, simulators, and research workflows.</p>
 </div>
-<div class="hero-side"><div class="statusbox">
-<div class="topline"><span><i class="statusdot"></i>Foundation released</span><span>KQFuzz</span></div>
-<div class="big">Find failures before<br>they become results.</div>
-<p>KQFuzz establishes the starting point; OmniQST expands toward adaptive, self-improving verification across the quantum software stack.</p>
-</div></div>
 </section>
 
-<div class="tabs"><a class="active" href="#overview">Overview</a><a href="#test">Test</a><a href="#verify">Verify</a><a href="#diagnose">Diagnose</a><a href="#benchmarks">Benchmarks</a><a href="#leaderboard">Leaderboard</a><a href="#models">Models</a></div>
+<div class="tabs"><button data-panel="overview" class="active">Overview</button><button data-panel="kqfuzz">KQFuzz</button><button data-panel="qusema">QuSema</button></div>
 
-<section id="overview" class="platform">
-<div class="section-head"><div><h2>Generate tests. Execute software. Diagnose semantics. Learn from failures.</h2></div></div>
-<div class="scheme">
-<div class="step"><div class="num">01</div><h3>Understand</h3><p>Model APIs, semantics, and software behavior.</p></div>
-<div class="step"><div class="num">02</div><h3>Generate</h3><p>Create high-value tests from software knowledge and execution history.</p></div>
-<div class="step"><div class="num">03</div><h3>Execute</h3><p>Run across libraries, compilers, simulators, and backends.</p></div>
-<div class="step"><div class="num">04</div><h3>Detect</h3><p>Surface crashes, inconsistencies, and semantic failures.</p></div>
-<div class="step"><div class="num">05</div><h3>Diagnose</h3><p>Reason over traces to localize the likely defect.</p></div>
-<div class="step"><div class="num">06</div><h3>Improve</h3><p>Feed failures back into future testing and verification strategies.</p></div>
+<section id="overview" class="platform pp">
+<div class="section-head"><div><h2>AI agents for autonomous quantum software engineering.</h2><p>Quantum libraries are now critical infrastructure for quantum algorithm development, and a bug in them can quietly propagate into experimental conclusions. OmniQST builds AI agents that test this software autonomously: they generate programs, expose defects and confirm them with executable tests.</p></div></div>
+<div class="award">
+<div>
+<div class="k">ACM SIGSOFT Distinguished Paper Award · ASE 2026</div>
+<h3>KQFuzz: Knowledge-Guided Fuzzing for Quantum Libraries via Large Language Models</h3>
+<p>The QID Lab’s first quantum software engineering paper received an ACM SIGSOFT Distinguished Paper Award at ASE 2026, the 41st IEEE/ACM International Conference on Automated Software Engineering (Munich, 12–16 October 2026).</p>
+<a class="go" href="#kqfuzz">About KQFuzz →</a>
+</div>
+<figure><img src="assets/kqfuzz-ase2026-award.jpg" alt="ACM SIGSOFT Distinguished Paper Award certificate, ASE 2026, awarded to KQFuzz" width="431" height="515"></figure>
 </div>
 </section>
 
-<section class="platform">
-<div class="section-head"><div><h2>A software trust platform, not a single fuzzer.</h2></div></div>
-<div class="modules">
-<div id="test" class="module"><div class="k">Foundation</div><div><h3>Test</h3><p>Knowledge-guided generation of high-value quantum software tests.</p></div></div>
-<div id="verify" class="module"><div class="k">Expanding</div><div><h3>Verify</h3><p>Semantic and behavioral verification across heterogeneous quantum stacks.</p></div></div>
-<div id="diagnose" class="module"><div class="k">Expanding</div><div><h3>Diagnose</h3><p>Trace failures, identify likely root causes, and suggest targeted repairs.</p></div></div>
-<div id="benchmarks" class="module"><div class="k">ASE 2026 foundation</div><div><h3>Benchmarks</h3><p>Bug-finding capability, coverage, validity, and cross-library generalization.</p></div></div>
-<div id="leaderboard" class="module"><div class="k">Planned</div><div><h3>Leaderboard</h3><p>Compare quantum software testing and verification agents under shared tasks.</p></div></div>
-<div id="models" class="module"><div class="k">Planned</div><div><h3>Models & traces</h3><p>Open backbones, benchmark harnesses, execution traces, and evaluation artifacts.</p></div></div>
+<section id="kqfuzz" class="platform pp">
+<div class="section-head paperhead"><div>
+<div class="k">ASE 2026 · ACM SIGSOFT Distinguished Paper Award</div>
+<h2>KQFuzz</h2>
+<p class="sub">Knowledge-Guided Fuzzing for Quantum Libraries via Large Language Models</p>
+<p class="by">Fuyuan Xia, Qixin Zhang, Chenhao Ying, Haojin Zhu, Shuai Wang, Yuan Luo, Pingchuan Ma, Yuxuan Du</p>
+</div>
+<svg class="viz qviz" viewBox="0 0 360 168" aria-hidden="true" focusable="false">
+<!-- knowledge from the library's codebase seeds the fuzzer -->
+<rect class="doc" x="18" y="52" width="40" height="56" rx="3"/>
+<g class="code"><line x1="26" y1="64" x2="48" y2="64"/><line x1="32" y1="74" x2="50" y2="74"/><line x1="32" y1="84" x2="44" y2="84"/><line x1="26" y1="94" x2="46" y2="94"/></g>
+<path class="feed" d="M58 80 L87 84"/>
+<!-- the library's execution paths -->
+<path class="edge" d="M92 84 L146 44 M92 84 L146 84 M92 84 L146 124 M146 44 L200 26 M146 44 L200 62 M146 84 L200 62 M146 84 L200 100 M146 124 L200 100 M146 124 L200 140 M200 26 L254 18 M200 26 L254 46 M200 62 L254 46 M200 62 L254 76 M200 100 L254 76 M200 100 L254 108 M200 140 L254 108 M200 140 L254 146 M254 46 L308 34 M254 76 L308 62 M254 76 L308 92 M254 108 L308 92 M254 108 L308 128"/>
+<!-- mutants the fitness function prunes -->
+<path class="line pruned" d="M92 84 L146 44 L200 26 M92 84 L146 84 L200 62"/>
+<!-- the mutant that reaches a deep path -->
+<path class="line draw" style="--len:245" d="M92 84 L146 124 L200 100 L254 76 L308 62"/>
+<g class="dim"><circle cx="146" cy="44" r="3"/><circle cx="146" cy="84" r="3"/><circle cx="200" cy="26" r="3"/><circle cx="200" cy="62" r="3"/><circle cx="200" cy="140" r="3"/><circle cx="254" cy="18" r="3"/><circle cx="254" cy="46" r="3"/><circle cx="254" cy="108" r="3"/><circle cx="254" cy="146" r="3"/><circle cx="308" cy="34" r="3"/><circle cx="308" cy="92" r="3"/><circle cx="308" cy="128" r="3"/></g>
+<g class="acc"><circle cx="92" cy="84" r="4"/><circle cx="146" cy="124" r="3.6"/><circle cx="200" cy="100" r="3.6"/><circle cx="254" cy="76" r="3.6"/></g>
+<!-- and finds the bug there -->
+<circle class="ring qring" cx="308" cy="62" r="10"/>
+<circle class="acc pulse" cx="308" cy="62" r="4"/>
+</svg>
+</div>
+<div class="paper">
+<div>
+<h3>Background</h3>
+<p>As quantum computing advances, the reliability and correctness of quantum libraries such as Qiskit, PennyLane and Cirq become increasingly critical. Fuzzing them with large language models is a natural approach, but existing LLM-based fuzzers still suffer from insufficient flexibility and low efficiency.</p>
+<p><b>KQFuzz</b> grounds LLM-generated tests in knowledge drawn from the library’s own codebase. A prompting scheme designed for quantum programs produces seed programs; fitness-guided evaluation and two-level mutations then drive testing toward complex execution paths and more diverse test cases.</p>
+<div class="links"><a class="btn solid" href="https://arxiv.org/abs/2607.25647" target="_blank" rel="noopener">Read the paper ↗</a><a class="go" href="https://arxiv.org/pdf/2607.25647" target="_blank" rel="noopener">PDF · arXiv:2607.25647</a></div>
+</div>
+<dl class="facts">
+<div><dt>Bugs found</dt><dd>13</dd><dd class="n">All confirmed by developers; 12 already fixed.</dd></div>
+<div><dt>Coverage</dt><dd>+18.44%</dd><dd class="n">Peak gain over state-of-the-art methods.</dd></div>
+<div><dt>Libraries tested</dt><dd class="t">Qiskit · PennyLane · Cirq</dd></div>
+</dl>
 </div>
 </section>
 
-<footer><span>OMNI · OmniQST</span><span class="lab"><img class="ntu" src="assets/ntu-logo.svg" alt="Nanyang Technological University" onerror="this.remove()">NTU QID Lab · Quantum Intelligence Discovery Lab</span></footer>
-</div></body></html>
+<section id="qusema" class="platform pp">
+<div class="section-head paperhead"><div>
+<div class="k">Preprint · arXiv, October 2026</div>
+<h2>QuSema</h2>
+<p class="sub">Detecting Silent Bugs in Quantum Libraries via Quantum-knowledge-enhanced Agents</p>
+<p class="by">Yujin Song, Kaining Zhang, Qixin Zhang, Shuai Wang, Pingchuan Ma, Yuxuan Du</p>
+</div>
+<svg class="viz qviz" viewBox="0 0 360 168" aria-hidden="true" focusable="false">
+<!-- documentation and quantum semantics are the oracle -->
+<rect class="doc" x="18" y="52" width="40" height="56" rx="3"/>
+<g class="code"><line x1="26" y1="64" x2="50" y2="64"/><line x1="26" y1="74" x2="46" y2="74"/><line x1="26" y1="84" x2="50" y2="84"/><line x1="26" y1="94" x2="40" y2="94"/></g>
+<path class="feed" d="M58 80 L74 80"/>
+<line class="hair" x1="78" y1="140" x2="342" y2="140"/>
+<!-- what the library returned: it ran, nothing crashed -->
+<g class="dim bars"><rect x="86" y="114" width="16" height="26"/><rect x="115" y="88" width="16" height="52"/><rect x="144" y="54" width="16" height="86"/><rect x="173" y="36" width="16" height="104"/><rect x="202" y="62" width="16" height="78"/><rect x="260" y="106" width="16" height="34"/><rect x="289" y="82" width="16" height="58"/><rect x="318" y="110" width="16" height="30"/></g>
+<rect class="qbad" x="231" y="48" width="16" height="92"/>
+<!-- what the semantics say it should have returned -->
+<g class="expect"><rect x="86" y="114" width="16" height="26"/><rect x="115" y="88" width="16" height="52"/><rect x="144" y="54" width="16" height="86"/><rect x="173" y="36" width="16" height="104"/><rect x="202" y="62" width="16" height="78"/><rect x="231" y="94" width="16" height="46"/><rect x="260" y="106" width="16" height="34"/><rect x="289" y="82" width="16" height="58"/><rect x="318" y="110" width="16" height="30"/></g>
+<!-- the agent checks each output against them -->
+<g class="qsweep"><line x1="78" y1="20" x2="78" y2="146"/></g>
+<!-- and flags the silent one -->
+<g class="qpop"><circle class="ring" cx="239" cy="30" r="8"/><circle class="acc" cx="239" cy="30" r="3.2"/></g>
+</svg>
+</div>
+<div class="paper">
+<div>
+<h3>Background</h3>
+<p>Quantum libraries are now critical infrastructure for quantum algorithm development. Existing testing techniques rely on failure-based or comparison-based oracles, so they expose a bug only when an execution fails, violates a runtime check or disagrees with another implementation. Silent bugs pass all three, yet they can produce incorrect results that propagate into experimental conclusions.</p>
+<p><b>QuSema</b> is an autonomous testing agent that uses quantum semantics and API documentation as its oracle. In an agentic loop it reviews documentation and source code, reasons about the intended behaviour, and generates executable tests that confirm suspected defects.</p>
+<div class="links"><a class="btn solid" href="https://arxiv.org/abs/2610.10258" target="_blank" rel="noopener">Read the paper ↗</a><a class="go" href="https://arxiv.org/pdf/2610.10258" target="_blank" rel="noopener">PDF · arXiv:2610.10258</a></div>
+</div>
+<dl class="facts">
+<div><dt>New bugs found</dt><dd>40</dd><dd class="n">Previously unknown, confirmed by developers.</dd></div>
+<div><dt>Silent bugs</dt><dd>30</dd><dd class="n">Of the 40: no crash, no failed check, no mismatch.</dd></div>
+<div><dt>Libraries tested</dt><dd class="t">Qiskit · PennyLane</dd></div>
+</dl>
+</div>
+</section>
+
+<footer><span>OMNI · OmniQST</span><a class="lab" href="people.html"><img class="ntu" src="assets/ntu-logo.svg" alt="Nanyang Technological University" onerror="this.remove()"><img class="qid" src="assets/qid-lab-mark.png" alt="" width="24" height="24">NTU QID Lab · Quantum Intelligence &amp; Discovery Lab</a></footer>
+</div><script src="assets/omni.js"></script>
+</body></html>
